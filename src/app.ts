@@ -18,6 +18,9 @@ app.get('/', (_req: Request, res: Response) => {
     });
 });
 
+// globalError handler
+app.use(globalErrorHandler);
+
 // not found route
 app.use(notFound);
 
