@@ -105,7 +105,13 @@ const returnBikeIntoDB = async (id: string) => {
     }
 };
 
+const getRentalsFromDB = async (userId: string) => {
+    const rentals = await Rental.find({ userId });
+    return rentals;
+};
+
 export const RentalServices = {
     createRentalIntoDB,
     returnBikeIntoDB,
+    getRentalsFromDB,
 };

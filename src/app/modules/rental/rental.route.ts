@@ -13,7 +13,8 @@ router
         auth(USER_ROLE.admin, USER_ROLE.user),
         validateRequest(RentalValidations.createRentalValidationSchema),
         RentalControllers.createRental,
-    );
+    )
+    .get(auth(USER_ROLE.admin, USER_ROLE.user), RentalControllers.getRentals);
 
 router
     .route('/:id/return')

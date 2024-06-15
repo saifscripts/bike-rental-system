@@ -80,7 +80,12 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         throw error;
     }
 });
+const getRentalsFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const rentals = yield rental_model_1.Rental.find({ userId });
+    return rentals;
+});
 exports.RentalServices = {
     createRentalIntoDB,
     returnBikeIntoDB,
+    getRentalsFromDB,
 };
