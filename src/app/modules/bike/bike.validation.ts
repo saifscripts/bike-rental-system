@@ -6,12 +6,12 @@ const createBikeValidationSchema = z.object({
             .string({
                 required_error: 'Name is required',
             })
-            .min(1, 'Name must be at least 1 character long'),
+            .min(1, 'Name cannot be an empty string'),
         description: z
             .string({
                 required_error: 'Description is required',
             })
-            .min(1, 'Description must be at least 1 character long'),
+            .min(1, 'Description cannot be an empty string'),
         pricePerHour: z
             .number({
                 required_error: 'Price per hour is required',
@@ -29,40 +29,30 @@ const createBikeValidationSchema = z.object({
             .string({
                 required_error: 'Model is required',
             })
-            .min(1, 'Model must be at least 1 character long'),
+            .min(1, 'Model cannot be an empty string'),
         brand: z
             .string({
                 required_error: 'Brand is required',
             })
-            .min(1, 'Brand must be at least 1 character long'),
+            .min(1, 'Brand cannot be an empty string'),
     }),
 });
 
 const updateBikeValidationSchema = z.object({
     body: z.object({
-        name: z
-            .string()
-            .min(1, 'Name must be at least 1 character long')
-            .optional(),
+        name: z.string().min(1, 'Name cannot be an empty string').optional(),
         description: z
             .string()
-            .min(1, 'Description must be at least 1 character long')
+            .min(1, 'Description cannot be an empty string')
             .optional(),
         pricePerHour: z
             .number()
             .positive('Price per hour must be a positive number')
             .optional(),
-        isAvailable: z.boolean().optional(),
         cc: z.number().positive('CC must be a positive number').optional(),
         year: z.number().optional(),
-        model: z
-            .string()
-            .min(1, 'Model must be at least 1 character long')
-            .optional(),
-        brand: z
-            .string()
-            .min(1, 'Brand must be at least 1 character long')
-            .optional(),
+        model: z.string().min(1, 'Model cannot be an empty string').optional(),
+        brand: z.string().min(1, 'Brand cannot be an empty string').optional(),
     }),
 });
 

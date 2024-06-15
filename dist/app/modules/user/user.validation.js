@@ -9,7 +9,7 @@ const signupValidationSchema = zod_1.z.object({
             .string({
             required_error: 'Name is required',
         })
-            .min(1, 'Name must be at least 1 character long'),
+            .min(1, 'Name cannot be an empty string'),
         email: zod_1.z
             .string({
             required_error: 'Email is required',
@@ -27,7 +27,7 @@ const signupValidationSchema = zod_1.z.object({
             .string({
             required_error: 'Address is required',
         })
-            .min(1, 'Address must be at least 1 character long'),
+            .min(1, 'Address cannot be an empty string'),
         role: zod_1.z.enum(user_constant_1.UserRoles, {
             required_error: 'Role is required!',
             invalid_type_error: "Role must be 'admin' or 'user'",
@@ -50,15 +50,12 @@ const loginValidationSchema = zod_1.z.object({
 });
 const updateProfileValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
-        name: zod_1.z
-            .string()
-            .min(1, 'Name must be at least 1 character long')
-            .optional(),
+        name: zod_1.z.string().min(1, 'Name cannot be an empty string').optional(),
         email: zod_1.z.string().email('Invalid email address').optional(),
         phone: zod_1.z.string().optional(),
         address: zod_1.z
             .string()
-            .min(1, 'Address must be at least 1 character long')
+            .min(1, 'Address cannot be an empty string')
             .optional(),
     }),
 });
