@@ -1,9 +1,15 @@
+import httpStatus from 'http-status';
 import { IUser } from './user.interface';
 import { User } from './user.model';
 
 const getProfileFromDB = async (id: string) => {
     const user = await User.findById(id);
-    return user;
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'User profile retrieved successfully',
+        data: user,
+    };
 };
 
 const updateProfileIntoDB = async (id: string, payload: Partial<IUser>) => {
@@ -11,7 +17,11 @@ const updateProfileIntoDB = async (id: string, payload: Partial<IUser>) => {
         new: true,
     });
 
-    return updatedUser;
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Profile updated successfully',
+        data: updatedUser,
+    };
 };
 
 export const UserServices = {

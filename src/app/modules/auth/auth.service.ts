@@ -6,8 +6,13 @@ import { User } from '../user/user.model';
 import { createToken } from './auth.util';
 
 const signup = async (payload: IUser) => {
-    const result = await User.create(payload);
-    return result;
+    const newUser = await User.create(payload);
+
+    return {
+        statusCode: httpStatus.CREATED,
+        message: 'User registered successfully',
+        data: newUser,
+    };
 };
 
 const login = async (payload: ILoginCredentials) => {
@@ -42,8 +47,10 @@ const login = async (payload: ILoginCredentials) => {
     user.password = undefined; // remove password field
 
     return {
-        accessToken,
-        user,
+        statusCode: httpStatus.OK,
+        message: 'User logged in successfully',
+        token: accessToken,
+        data: user,
     };
 };
 

@@ -19,8 +19,12 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const user_model_1 = require("../user/user.model");
 const auth_util_1 = require("./auth.util");
 const signup = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.create(payload);
-    return result;
+    const newUser = yield user_model_1.User.create(payload);
+    return {
+        statusCode: http_status_1.default.CREATED,
+        message: 'User registered successfully',
+        data: newUser,
+    };
 });
 const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email }).select('+password');
@@ -38,8 +42,10 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const accessToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_exp_in);
     user.password = undefined; // remove password field
     return {
-        accessToken,
-        user,
+        statusCode: http_status_1.default.OK,
+        message: 'User logged in successfully',
+        token: accessToken,
+        data: user,
     };
 });
 exports.AuthServices = {

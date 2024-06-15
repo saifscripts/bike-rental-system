@@ -18,7 +18,11 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const bike_model_1 = require("./bike.model");
 const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const newBike = yield bike_model_1.Bike.create(payload);
-    return newBike;
+    return {
+        statusCode: http_status_1.default.CREATED,
+        message: 'Bike added successfully',
+        data: newBike,
+    };
 });
 const getBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const bikes = yield bike_model_1.Bike.find();
@@ -43,7 +47,11 @@ const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, func
     const updatedBike = yield bike_model_1.Bike.findByIdAndUpdate(id, payload, {
         new: true,
     });
-    return updatedBike;
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Bike updated successfully',
+        data: updatedBike,
+    };
 });
 const deleteBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const isBikeExists = yield bike_model_1.Bike.findById(id);
@@ -51,7 +59,11 @@ const deleteBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
     }
     const deletedBike = yield bike_model_1.Bike.findByIdAndDelete(id);
-    return deletedBike;
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Bike deleted successfully',
+        data: deletedBike,
+    };
 });
 exports.BikeServices = {
     createBikeIntoDB,

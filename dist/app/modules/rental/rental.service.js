@@ -36,7 +36,11 @@ const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, v
         });
         yield session.commitTransaction();
         yield session.endSession();
-        return newRental;
+        return {
+            statusCode: http_status_1.default.CREATED,
+            message: 'Rental created successfully',
+            data: newRental,
+        };
     }
     catch (error) {
         yield session.abortTransaction();
@@ -72,7 +76,11 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         });
         yield session.commitTransaction();
         yield session.endSession();
-        return updatedRental;
+        return {
+            statusCode: http_status_1.default.OK,
+            message: 'Bike returned successfully',
+            data: updatedRental,
+        };
     }
     catch (error) {
         yield session.abortTransaction();

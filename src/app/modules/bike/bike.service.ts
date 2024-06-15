@@ -5,7 +5,12 @@ import { Bike } from './bike.model';
 
 const createBikeIntoDB = async (payload: IBike) => {
     const newBike = await Bike.create(payload);
-    return newBike;
+
+    return {
+        statusCode: httpStatus.CREATED,
+        message: 'Bike added successfully',
+        data: newBike,
+    };
 };
 
 const getBikesFromDB = async () => {
@@ -37,7 +42,11 @@ const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {
         new: true,
     });
 
-    return updatedBike;
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Bike updated successfully',
+        data: updatedBike,
+    };
 };
 
 const deleteBikeFromDB = async (id: string) => {
@@ -48,7 +57,12 @@ const deleteBikeFromDB = async (id: string) => {
     }
 
     const deletedBike = await Bike.findByIdAndDelete(id);
-    return deletedBike;
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Bike deleted successfully',
+        data: deletedBike,
+    };
 };
 
 export const BikeServices = {

@@ -40,7 +40,12 @@ const createRentalIntoDB = async (
 
         await session.commitTransaction();
         await session.endSession();
-        return newRental;
+
+        return {
+            statusCode: httpStatus.CREATED,
+            message: 'Rental created successfully',
+            data: newRental,
+        };
     } catch (error) {
         await session.abortTransaction();
         await session.endSession();
@@ -97,7 +102,12 @@ const returnBikeIntoDB = async (id: string) => {
 
         await session.commitTransaction();
         await session.endSession();
-        return updatedRental;
+
+        return {
+            statusCode: httpStatus.OK,
+            message: 'Bike returned successfully',
+            data: updatedRental,
+        };
     } catch (error) {
         await session.abortTransaction();
         await session.endSession();

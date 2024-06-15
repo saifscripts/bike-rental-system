@@ -13,39 +13,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BikeControllers = void 0;
-const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.CREATED,
-        message: 'Bike added successfully',
-        data: result,
-    });
+    (0, sendResponse_1.default)(res, result);
 }));
 const getBikes = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const responseData = yield bike_service_1.BikeServices.getBikesFromDB();
-    (0, sendResponse_1.default)(res, responseData);
+    const result = yield bike_service_1.BikeServices.getBikesFromDB();
+    (0, sendResponse_1.default)(res, result);
 }));
 const updateBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.BikeServices.updateBikeIntoDB(id, req.body);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        message: 'Bike updated successfully',
-        data: result,
-    });
+    (0, sendResponse_1.default)(res, result);
 }));
 const deleteBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.BikeServices.deleteBikeFromDB(id);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        message: 'Bike deleted successfully',
-        data: result,
-    });
+    (0, sendResponse_1.default)(res, result);
 }));
 exports.BikeControllers = {
     createBike,
