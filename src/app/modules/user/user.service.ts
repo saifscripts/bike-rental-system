@@ -9,7 +9,7 @@ const getProfileFromDB = async (id: string) => {
 const updateProfileIntoDB = async (id: string, payload: Partial<IUser>) => {
     const updatedUser = await User.findByIdAndUpdate(id, payload, {
         new: true,
-    }).select('-createdAt -updatedAt -__v');
+    });
 
     return updatedUser;
 };

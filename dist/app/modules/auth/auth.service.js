@@ -23,7 +23,7 @@ const signup = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email }).select('+password -createdAt -updatedAt -__v');
+    const user = yield user_model_1.User.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email }).select('+password');
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }

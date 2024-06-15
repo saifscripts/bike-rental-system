@@ -18,7 +18,7 @@ const getProfileFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
 const updateProfileIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedUser = yield user_model_1.User.findByIdAndUpdate(id, payload, {
         new: true,
-    }).select('-createdAt -updatedAt -__v');
+    });
     return updatedUser;
 });
 exports.UserServices = {

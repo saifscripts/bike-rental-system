@@ -12,7 +12,7 @@ const signup = async (payload: IUser) => {
 
 const login = async (payload: ILoginCredentials) => {
     const user = await User.findOne({ email: payload?.email }).select(
-        '+password -createdAt -updatedAt -__v',
+        '+password',
     );
 
     if (!user) {
