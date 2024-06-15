@@ -39,6 +39,34 @@ const createBikeValidationSchema = zod_1.z.object({
             .min(1, 'Brand must be at least 1 character long'),
     }),
 });
+const updateBikeValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        name: zod_1.z
+            .string()
+            .min(1, 'Name must be at least 1 character long')
+            .optional(),
+        description: zod_1.z
+            .string()
+            .min(1, 'Description must be at least 1 character long')
+            .optional(),
+        pricePerHour: zod_1.z
+            .number()
+            .positive('Price per hour must be a positive number')
+            .optional(),
+        isAvailable: zod_1.z.boolean().optional(),
+        cc: zod_1.z.number().positive('CC must be a positive number').optional(),
+        year: zod_1.z.number().optional(),
+        model: zod_1.z
+            .string()
+            .min(1, 'Model must be at least 1 character long')
+            .optional(),
+        brand: zod_1.z
+            .string()
+            .min(1, 'Brand must be at least 1 character long')
+            .optional(),
+    }),
+});
 exports.BikeValidations = {
     createBikeValidationSchema,
+    updateBikeValidationSchema,
 };

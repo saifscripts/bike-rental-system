@@ -16,4 +16,12 @@ router
     )
     .get(BikeControllers.getBikes);
 
+router
+    .route('/:id')
+    .put(
+        auth(USER_ROLE.admin),
+        validateRequest(BikeValidations.updateBikeValidationSchema),
+        BikeControllers.updateBike,
+    );
+
 export const BikeRoutes = router;

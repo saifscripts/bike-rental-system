@@ -18,7 +18,22 @@ const getBikesFromDB = async () => {
     return bikes;
 };
 
+const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {
+    const isBikeExists = await Bike.findById(id);
+
+    if (!isBikeExists) {
+        throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
+    }
+
+    const updatedBike = await Bike.findByIdAndUpdate(id, payload, {
+        new: true,
+    });
+
+    return updatedBike;
+};
+
 export const BikeServices = {
     createBikeIntoDB,
     getBikesFromDB,
+    updateBikeIntoDB,
 };

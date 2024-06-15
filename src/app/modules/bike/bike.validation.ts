@@ -38,6 +38,35 @@ const createBikeValidationSchema = z.object({
     }),
 });
 
+const updateBikeValidationSchema = z.object({
+    body: z.object({
+        name: z
+            .string()
+            .min(1, 'Name must be at least 1 character long')
+            .optional(),
+        description: z
+            .string()
+            .min(1, 'Description must be at least 1 character long')
+            .optional(),
+        pricePerHour: z
+            .number()
+            .positive('Price per hour must be a positive number')
+            .optional(),
+        isAvailable: z.boolean().optional(),
+        cc: z.number().positive('CC must be a positive number').optional(),
+        year: z.number().optional(),
+        model: z
+            .string()
+            .min(1, 'Model must be at least 1 character long')
+            .optional(),
+        brand: z
+            .string()
+            .min(1, 'Brand must be at least 1 character long')
+            .optional(),
+    }),
+});
+
 export const BikeValidations = {
     createBikeValidationSchema,
+    updateBikeValidationSchema,
 };

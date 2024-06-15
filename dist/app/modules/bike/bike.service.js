@@ -27,7 +27,18 @@ const getBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     return bikes;
 });
+const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isBikeExists = yield bike_model_1.Bike.findById(id);
+    if (!isBikeExists) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
+    }
+    const updatedBike = yield bike_model_1.Bike.findByIdAndUpdate(id, payload, {
+        new: true,
+    });
+    return updatedBike;
+});
 exports.BikeServices = {
     createBikeIntoDB,
     getBikesFromDB,
+    updateBikeIntoDB,
 };
