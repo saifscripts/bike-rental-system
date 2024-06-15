@@ -37,8 +37,17 @@ const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, func
     });
     return updatedBike;
 });
+const deleteBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const isBikeExists = yield bike_model_1.Bike.findById(id);
+    if (!isBikeExists) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
+    }
+    const deletedBike = yield bike_model_1.Bike.findByIdAndDelete(id);
+    return deletedBike;
+});
 exports.BikeServices = {
     createBikeIntoDB,
     getBikesFromDB,
     updateBikeIntoDB,
+    deleteBikeFromDB,
 };

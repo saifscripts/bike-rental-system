@@ -22,6 +22,7 @@ router
         auth(USER_ROLE.admin),
         validateRequest(BikeValidations.updateBikeValidationSchema),
         BikeControllers.updateBike,
-    );
+    )
+    .delete(auth(USER_ROLE.admin), BikeControllers.deleteBike);
 
 export const BikeRoutes = router;
