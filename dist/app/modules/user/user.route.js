@@ -14,5 +14,5 @@ const router = express_1.default.Router();
 router
     .route('/me')
     .get((0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), user_controller_1.UserControllers.getProfile)
-    .put((0, validateRequest_1.default)(user_validation_1.UserValidations.updateProfileValidationSchema), (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), user_controller_1.UserControllers.updateProfile);
+    .put((0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), (0, validateRequest_1.default)(user_validation_1.UserValidations.updateProfileValidationSchema), user_controller_1.UserControllers.updateProfile);
 exports.UserRoutes = router;
