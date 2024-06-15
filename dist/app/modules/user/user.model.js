@@ -17,7 +17,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const mongoose_1 = require("mongoose");
 const config_1 = __importDefault(require("../../config"));
 const user_constant_1 = require("./user.constant");
-const userSchema = new mongoose_1.Schema({
+const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
@@ -27,19 +27,19 @@ const userSchema = new mongoose_1.Schema({
 }, {
     timestamps: true,
 });
-userSchema.pre('save', function (next) {
+UserSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         this.password = yield bcrypt_1.default.hash(this.password, Number(config_1.default.bcrypt_salt_rounds));
         next();
     });
 });
-userSchema.post('save', function (doc, next) {
+UserSchema.post('save', function (doc, next) {
     doc.password = undefined;
     next();
 });
-userSchema.statics.comparePassword = function (plain, hashed) {
+UserSchema.statics.comparePassword = function (plain, hashed) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield bcrypt_1.default.compare(plain, hashed);
     });
 };
-exports.User = (0, mongoose_1.model)('User', userSchema);
+exports.User = (0, mongoose_1.model)('User', UserSchema);

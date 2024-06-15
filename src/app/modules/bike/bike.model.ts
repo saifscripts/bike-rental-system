@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { IBike } from './bike.interface';
 
-const bikeSchema = new Schema<IBike>(
+const BikeSchema = new Schema<IBike>(
     {
         name: { type: String, required: true },
         description: { type: String, required: true },
@@ -17,4 +17,4 @@ const bikeSchema = new Schema<IBike>(
     },
 );
 
-export const Bike = model<IBike>('Bike', bikeSchema);
+export const Bike = model<IBike>('Bike', BikeSchema);

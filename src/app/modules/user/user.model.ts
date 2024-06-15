@@ -4,7 +4,7 @@ import config from '../../config';
 import { UserRoles } from './user.constant';
 import { IUser, UserModel } from './user.interface';
 
-const userSchema = new Schema<IUser, UserModel>(
+const UserSchema = new Schema<IUser, UserModel>(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
@@ -18,7 +18,7 @@ const userSchema = new Schema<IUser, UserModel>(
     },
 );
 
-userSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(
         this.password as string,
         Number(config.bcrypt_salt_rounds),
@@ -26,16 +26,16 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-userSchema.post('save', function (doc, next) {
+UserSchema.post('save', function (doc, next) {
     doc.password = undefined;
     next();
 });
 
-userSchema.statics.comparePassword = async function (
+UserSchema.statics.comparePassword = async function (
     plain: string,
     hashed: string,
 ) {
     return await bcrypt.compare(plain, hashed);
 };
 
-export const User = model<IUser, UserModel>('User', userSchema);
+export const User = model<IUser, UserModel>('User', UserSchema);
