@@ -13,6 +13,7 @@ router
         auth(USER_ROLE.admin),
         validateRequest(BikeValidations.createBikeValidationSchema),
         BikeControllers.createBike,
-    );
+    )
+    .get(BikeControllers.getBikes);
 
 export const BikeRoutes = router;

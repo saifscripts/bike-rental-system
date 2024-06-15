@@ -25,6 +25,15 @@ const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const getBikes = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield bike_service_1.BikeServices.getBikesFromDB();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        message: 'Bikes retrieved successfully',
+        data: result,
+    });
+}));
 exports.BikeControllers = {
     createBike,
+    getBikes,
 };
