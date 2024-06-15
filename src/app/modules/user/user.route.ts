@@ -11,8 +11,8 @@ router
     .route('/me')
     .get(auth(USER_ROLE.admin, USER_ROLE.user), UserControllers.getProfile)
     .put(
-        validateRequest(UserValidations.updateProfileValidationSchema),
         auth(USER_ROLE.admin, USER_ROLE.user),
+        validateRequest(UserValidations.updateProfileValidationSchema),
         UserControllers.updateProfile,
     );
 
