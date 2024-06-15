@@ -32,5 +32,7 @@ const RentalSchema = new mongoose_1.Schema({
     returnTime: { type: Date, default: null },
     totalCost: { type: Number, default: 0 },
     isReturned: { type: Boolean, default: false },
+}, {
+    timestamps: true,
 });
 exports.Rental = mongoose_1.default.model('Rental', RentalSchema);
