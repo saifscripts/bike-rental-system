@@ -32,7 +32,7 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Wrong user id or password');
     }
     const jwtPayload = {
-        id: user.id,
+        id: user._id,
         role: user.role,
     };
     const accessToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_exp_in);
