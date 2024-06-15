@@ -25,6 +25,16 @@ const createRental = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
+const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield rental_service_1.RentalServices.returnBikeIntoDB(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        message: 'Bike returned successfully',
+        data: result,
+    });
+}));
 exports.RentalControllers = {
     createRental,
+    returnBike,
 };

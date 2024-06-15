@@ -14,4 +14,7 @@ const router = express_1.default.Router();
 router
     .route('/')
     .post((0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), (0, validateRequest_1.default)(rental_validation_1.RentalValidations.createRentalValidationSchema), rental_controller_1.RentalControllers.createRental);
+router
+    .route('/:id/return')
+    .put((0, auth_1.default)(user_constant_1.USER_ROLE.admin), rental_controller_1.RentalControllers.returnBike);
 exports.RentalRoutes = router;
