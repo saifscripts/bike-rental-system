@@ -48,7 +48,22 @@ const loginValidationSchema = zod_1.z.object({
             .min(6, 'Password must be at least 6 characters long'),
     }),
 });
+const updateProfileValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        name: zod_1.z
+            .string()
+            .min(1, 'Name must be at least 1 character long')
+            .optional(),
+        email: zod_1.z.string().email('Invalid email address').optional(),
+        phone: zod_1.z.string().optional(),
+        address: zod_1.z
+            .string()
+            .min(1, 'Address must be at least 1 character long')
+            .optional(),
+    }),
+});
 exports.UserValidations = {
     signupValidationSchema,
     loginValidationSchema,
+    updateProfileValidationSchema,
 };

@@ -1,3 +1,4 @@
+import { IUser } from './user.interface';
 import { User } from './user.model';
 
 const getProfileFromDB = async (id: string) => {
@@ -5,6 +6,15 @@ const getProfileFromDB = async (id: string) => {
     return user;
 };
 
+const updateProfileIntoDB = async (id: string, payload: Partial<IUser>) => {
+    const updatedUser = await User.findByIdAndUpdate(id, payload, {
+        new: true,
+    }).select('-createdAt -updatedAt -__v');
+
+    return updatedUser;
+};
+
 export const UserServices = {
     getProfileFromDB,
+    updateProfileIntoDB,
 };
