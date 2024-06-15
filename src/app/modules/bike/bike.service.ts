@@ -12,10 +12,18 @@ const getBikesFromDB = async () => {
     const bikes = await Bike.find();
 
     if (!bikes.length) {
-        throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
+        return {
+            statusCode: httpStatus.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
     }
 
-    return bikes;
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Bikes retrieved successfully',
+        data: bikes,
+    };
 };
 
 const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {

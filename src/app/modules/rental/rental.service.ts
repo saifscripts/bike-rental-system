@@ -107,7 +107,20 @@ const returnBikeIntoDB = async (id: string) => {
 
 const getRentalsFromDB = async (userId: string) => {
     const rentals = await Rental.find({ userId });
-    return rentals;
+
+    if (!rentals.length) {
+        return {
+            statusCode: httpStatus.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
+    }
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Rentals retrieved successfully',
+        data: rentals,
+    };
 };
 
 export const RentalServices = {

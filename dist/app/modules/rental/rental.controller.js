@@ -36,12 +36,8 @@ const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 }));
 const getRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
-    const result = yield rental_service_1.RentalServices.getRentalsFromDB(id);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        message: 'Rentals retrieved successfully',
-        data: result,
-    });
+    const responseData = yield rental_service_1.RentalServices.getRentalsFromDB(id);
+    (0, sendResponse_1.default)(res, responseData);
 }));
 exports.RentalControllers = {
     createRental,

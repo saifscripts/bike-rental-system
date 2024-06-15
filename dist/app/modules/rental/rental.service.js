@@ -82,7 +82,18 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const getRentalsFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const rentals = yield rental_model_1.Rental.find({ userId });
-    return rentals;
+    if (!rentals.length) {
+        return {
+            statusCode: http_status_1.default.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
+    }
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Rentals retrieved successfully',
+        data: rentals,
+    };
 });
 exports.RentalServices = {
     createRentalIntoDB,
