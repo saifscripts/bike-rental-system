@@ -11,10 +11,17 @@ const createRentalIntoDB = async (
     decodedUser: JwtPayload,
     payload: Pick<IRental, 'userId' | 'bikeId' | 'startTime'>,
 ) => {
-    const isBikeExists = await Bike.findById(payload.bikeId);
+    const bike = await Bike.findById(payload.bikeId);
 
-    if (!isBikeExists) {
+    if (!bike) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
+    }
+
+    if (!bike.isAvailable) {
+        throw new AppError(
+            httpStatus.NOT_FOUND,
+            'Bike is not available right now!',
+        );
     }
 
     const session = await mongoose.startSession();

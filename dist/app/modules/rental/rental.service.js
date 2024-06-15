@@ -20,9 +20,12 @@ const bike_model_1 = require("../bike/bike.model");
 const rental_model_1 = require("./rental.model");
 const rental_util_1 = require("./rental.util");
 const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const isBikeExists = yield bike_model_1.Bike.findById(payload.bikeId);
-    if (!isBikeExists) {
+    const bike = yield bike_model_1.Bike.findById(payload.bikeId);
+    if (!bike) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
+    }
+    if (!bike.isAvailable) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike is not available right now!');
     }
     const session = yield mongoose_1.default.startSession();
     try {
