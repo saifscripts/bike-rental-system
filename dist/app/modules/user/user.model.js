@@ -20,7 +20,7 @@ const user_constant_1 = require("./user.constant");
 const userSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     phone: { type: String, required: true },
     address: { type: String, required: true },
     role: { type: String, required: true, enum: user_constant_1.UserRoles },
@@ -32,5 +32,9 @@ userSchema.pre('save', function (next) {
         this.password = yield bcrypt_1.default.hash(this.password, Number(config_1.default.bcrypt_salt_rounds));
         next();
     });
+});
+userSchema.post('save', function (doc, next) {
+    doc.password = undefined;
+    next();
 });
 exports.User = (0, mongoose_1.model)('User', userSchema);
