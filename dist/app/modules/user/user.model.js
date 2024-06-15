@@ -37,4 +37,9 @@ userSchema.post('save', function (doc, next) {
     doc.password = undefined;
     next();
 });
+userSchema.statics.comparePassword = function (plain, hashed) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield bcrypt_1.default.compare(plain, hashed);
+    });
+};
 exports.User = (0, mongoose_1.model)('User', userSchema);

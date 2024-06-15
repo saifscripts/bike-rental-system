@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserValidations = exports.signupValidationSchema = void 0;
+exports.UserValidations = void 0;
 const zod_1 = require("zod");
 const user_constant_1 = require("./user.constant");
-exports.signupValidationSchema = zod_1.z.object({
+const signupValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
         name: zod_1.z
             .string({
@@ -34,6 +34,21 @@ exports.signupValidationSchema = zod_1.z.object({
         }),
     }),
 });
+const loginValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        email: zod_1.z
+            .string({
+            required_error: 'Email is required',
+        })
+            .email('Invalid email address'),
+        password: zod_1.z
+            .string({
+            required_error: 'Password is required',
+        })
+            .min(6, 'Password must be at least 6 characters long'),
+    }),
+});
 exports.UserValidations = {
-    signupValidationSchema: exports.signupValidationSchema,
+    signupValidationSchema,
+    loginValidationSchema,
 };

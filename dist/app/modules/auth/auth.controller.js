@@ -25,6 +25,16 @@ const signup = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0,
         data: result,
     });
 }));
+const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { accessToken, user } = yield auth_service_1.AuthServices.login(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        message: 'User logged in successfully',
+        token: accessToken,
+        data: user,
+    });
+}));
 exports.AuthControllers = {
     signup,
+    login,
 };
