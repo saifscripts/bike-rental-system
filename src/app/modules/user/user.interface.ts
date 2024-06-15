@@ -1,4 +1,7 @@
 import { Model } from 'mongoose';
+import { USER_ROLE } from './user.constant';
+
+export type IUserRole = keyof typeof USER_ROLE;
 
 export interface IUser {
     name: string;
@@ -6,7 +9,7 @@ export interface IUser {
     password?: string;
     phone: string;
     address: string;
-    role: 'admin' | 'user';
+    role: IUserRole;
 }
 
 export interface ILoginCredentials {
