@@ -26,6 +26,7 @@ const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function
 });
 const getBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const bikes = yield bike_model_1.Bike.find();
+    // check if retrieved data is empty
     if (!bikes.length) {
         return {
             statusCode: http_status_1.default.NOT_FOUND,
@@ -41,9 +42,11 @@ const getBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isBikeExists = yield bike_model_1.Bike.findById(id);
+    // check if the bike exist
     if (!isBikeExists) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
     }
+    // check if the bike exists
     const updatedBike = yield bike_model_1.Bike.findByIdAndUpdate(id, payload, {
         new: true,
     });
@@ -55,9 +58,11 @@ const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, func
 });
 const deleteBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const isBikeExists = yield bike_model_1.Bike.findById(id);
+    // check if the bike exists
     if (!isBikeExists) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
     }
+    // delete the bike
     const deletedBike = yield bike_model_1.Bike.findByIdAndDelete(id);
     return {
         statusCode: http_status_1.default.OK,

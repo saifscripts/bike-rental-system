@@ -18,7 +18,7 @@ const validateRequest = (schema) => {
         const parsed = yield schema.parseAsync({
             body: req.body,
         });
-        req.body = parsed.body;
+        req.body = parsed.body; // set request body from the parsed data
         next();
     }));
 };

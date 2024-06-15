@@ -16,11 +16,13 @@ exports.UserControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_service_1 = require("./user.service");
+// Route: /api/users/me (GET)
 const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
     const result = yield user_service_1.UserServices.getProfileFromDB(id);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/users/me (PUT)
 const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
     const result = yield user_service_1.UserServices.updateProfileIntoDB(id, req.body);

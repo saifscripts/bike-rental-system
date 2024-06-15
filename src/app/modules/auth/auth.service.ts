@@ -20,10 +20,12 @@ const login = async (payload: ILoginCredentials) => {
         '+password',
     );
 
+    // check if user exists
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
+    // check if the password matched
     const isPasswordMatched = await User.comparePassword(
         payload?.password,
         user?.password as string,
@@ -38,6 +40,7 @@ const login = async (payload: ILoginCredentials) => {
         role: user.role,
     };
 
+    // create access token
     const accessToken = createToken(
         jwtPayload,
         config.jwt_access_secret as string,

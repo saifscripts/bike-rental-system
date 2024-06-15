@@ -16,19 +16,23 @@ exports.BikeControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
+// Route: /api/bikes (POST)
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/bikes (GET)
 const getBikes = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.BikeServices.getBikesFromDB();
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/bikes/:id (PUT)
 const updateBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.BikeServices.updateBikeIntoDB(id, req.body);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/bikes/:id (DELETE)
 const deleteBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.BikeServices.deleteBikeFromDB(id);

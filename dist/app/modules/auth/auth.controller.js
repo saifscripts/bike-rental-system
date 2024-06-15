@@ -16,10 +16,12 @@ exports.AuthControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
+// Route: /api/auth/signup (POST)
 const signup = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.signup(req.body);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/auth/login (POST)
 const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.login(req.body);
     (0, sendResponse_1.default)(res, result);

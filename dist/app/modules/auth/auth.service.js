@@ -28,9 +28,11 @@ const signup = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email }).select('+password');
+    // check if user exists
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
+    // check if the password matched
     const isPasswordMatched = yield user_model_1.User.comparePassword(payload === null || payload === void 0 ? void 0 : payload.password, user === null || user === void 0 ? void 0 : user.password);
     if (!isPasswordMatched) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Wrong user id or password');
@@ -39,6 +41,7 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         id: user._id,
         role: user.role,
     };
+    // create access token
     const accessToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_exp_in);
     user.password = undefined; // remove password field
     return {

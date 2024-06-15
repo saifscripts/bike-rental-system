@@ -21,21 +21,27 @@ const rental_model_1 = require("./rental.model");
 const rental_util_1 = require("./rental.util");
 const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const bike = yield bike_model_1.Bike.findById(payload.bikeId);
+    // check if the bike exists
     if (!bike) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
     }
+    // check if the bike is available right now
     if (!bike.isAvailable) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike is not available right now!');
     }
     const session = yield mongoose_1.default.startSession();
     try {
         session.startTransaction();
+        // create new rental with payload and decoded userId
         const newRental = yield rental_model_1.Rental.create(Object.assign(Object.assign({}, payload), { userId: decodedUser.id }));
+        // update bike availability status to false
         yield bike_model_1.Bike.findByIdAndUpdate(payload.bikeId, {
             isAvailable: false,
         });
+        // commit transaction and end session
         yield session.commitTransaction();
         yield session.endSession();
+        // return response
         return {
             statusCode: http_status_1.default.CREATED,
             message: 'Rental created successfully',
@@ -50,12 +56,15 @@ const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, v
 });
 const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const rental = yield rental_model_1.Rental.findById(id);
+    // check if the rental exists
     if (!rental) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Rental not found!');
     }
+    // check if the bike is already returned
     if (rental.isReturned) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike is already returned!');
     }
+    // retrieve the bike data for updating rental data
     const bike = yield bike_model_1.Bike.findById(rental.bikeId);
     if (!bike) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Failed to retrieve the bike!');
@@ -64,6 +73,7 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         session.startTransaction();
         const currentTime = new Date();
+        // calculate cost and update relevant rental data
         const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(id, {
             returnTime: currentTime,
             totalCost: (0, rental_util_1.calculateTotalCost)(rental.startTime, currentTime, bike.pricePerHour),
@@ -71,11 +81,14 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         }, {
             new: true,
         });
+        // update bike availability status to true
         yield bike_model_1.Bike.findByIdAndUpdate(rental.bikeId, {
             isAvailable: true,
         });
+        // commit transaction and end session
         yield session.commitTransaction();
         yield session.endSession();
+        // return response
         return {
             statusCode: http_status_1.default.OK,
             message: 'Bike returned successfully',
@@ -90,6 +103,7 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const getRentalsFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const rentals = yield rental_model_1.Rental.find({ userId });
+    // check if retrieved data is empty
     if (!rentals.length) {
         return {
             statusCode: http_status_1.default.NOT_FOUND,

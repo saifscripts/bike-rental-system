@@ -11,6 +11,7 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
     return catchAsync(async (req, _res, next) => {
         const authHeader = req.headers.authorization;
 
+        // check if auth header is sent
         if (!authHeader) {
             throw new AppError(
                 httpStatus.UNAUTHORIZED,
@@ -18,8 +19,9 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
             );
         }
 
-        const token = authHeader.split(' ')[1];
+        const token = authHeader.split(' ')[1]; // split and retrieve token
 
+        // check if token is present
         if (!token) {
             throw new AppError(
                 httpStatus.UNAUTHORIZED,
@@ -27,6 +29,7 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
             );
         }
 
+        // decode the token
         const decoded = jwt.verify(
             token,
             config.jwt_access_secret as string,
@@ -34,12 +37,14 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
 
         const { id, role } = decoded;
 
+        // check if user exists from the decoded user id
         const user = await User.findById(id);
 
         if (!user) {
             throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
         }
 
+        // check if the decoded user is authorized
         if (authorizedRoles && !authorizedRoles.includes(role)) {
             throw new AppError(
                 httpStatus.UNAUTHORIZED,

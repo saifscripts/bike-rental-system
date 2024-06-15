@@ -12,6 +12,7 @@ const handleDuplicateError_1 = __importDefault(require("../errors/handleDuplicat
 const handleValidationError_1 = __importDefault(require("../errors/handleValidationError"));
 const handleZodError_1 = __importDefault(require("../errors/handleZodError"));
 const globalErrorHandler = (err, _req, res, _next) => {
+    // default response data
     let statusCode = http_status_1.default.INTERNAL_SERVER_ERROR;
     let message = 'Something went wrong!';
     let errorMessages = [
@@ -20,6 +21,7 @@ const globalErrorHandler = (err, _req, res, _next) => {
             message: 'Something went wrong!',
         },
     ];
+    // format and set response data based on the error type
     if (err instanceof zod_1.ZodError) {
         const formattedError = (0, handleZodError_1.default)(err);
         statusCode = formattedError.statusCode;
@@ -63,6 +65,7 @@ const globalErrorHandler = (err, _req, res, _next) => {
             },
         ];
     }
+    // send error response
     return res.status(statusCode).json({
         success: false,
         statusCode,

@@ -8,7 +8,7 @@ const validateRequest = (schema: AnyZodObject): RequestHandler => {
             body: req.body,
         });
 
-        req.body = parsed.body;
+        req.body = parsed.body; // set request body from the parsed data
         next();
     });
 };

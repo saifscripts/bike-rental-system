@@ -10,6 +10,7 @@ import handleZodError from '../errors/handleZodError';
 import { IErrorMessage } from '../interfaces/errors';
 
 const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+    // default response data
     let statusCode: number = httpStatus.INTERNAL_SERVER_ERROR;
     let message: string = 'Something went wrong!';
     let errorMessages: IErrorMessage[] = [
@@ -19,6 +20,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
         },
     ];
 
+    // format and set response data based on the error type
     if (err instanceof ZodError) {
         const formattedError = handleZodError(err);
         statusCode = formattedError.statusCode;
@@ -58,6 +60,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
         ];
     }
 
+    // send error response
     return res.status(statusCode).json({
         success: false,
         statusCode,

@@ -30,6 +30,7 @@ function main() {
         }
     });
 }
+// handle unhandled rejection
 process.on('unhandledRejection', () => {
     console.log('🥸 unhandledRejection is detected. Shutting down the server...');
     if (server) {
@@ -41,6 +42,7 @@ process.on('unhandledRejection', () => {
         process.exit(1);
     }
 });
+// handle uncaught exception
 process.on('uncaughtException', () => {
     console.log('🤬 uncaughtException is detected. Shutting down the server...');
     process.exit(1);

@@ -16,6 +16,7 @@ const createBikeIntoDB = async (payload: IBike) => {
 const getBikesFromDB = async () => {
     const bikes = await Bike.find();
 
+    // check if retrieved data is empty
     if (!bikes.length) {
         return {
             statusCode: httpStatus.NOT_FOUND,
@@ -34,10 +35,12 @@ const getBikesFromDB = async () => {
 const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {
     const isBikeExists = await Bike.findById(id);
 
+    // check if the bike exist
     if (!isBikeExists) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
     }
 
+    // check if the bike exists
     const updatedBike = await Bike.findByIdAndUpdate(id, payload, {
         new: true,
     });
@@ -52,10 +55,12 @@ const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {
 const deleteBikeFromDB = async (id: string) => {
     const isBikeExists = await Bike.findById(id);
 
+    // check if the bike exists
     if (!isBikeExists) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
     }
 
+    // delete the bike
     const deletedBike = await Bike.findByIdAndDelete(id);
 
     return {

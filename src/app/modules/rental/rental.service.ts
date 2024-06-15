@@ -13,10 +13,12 @@ const createRentalIntoDB = async (
 ) => {
     const bike = await Bike.findById(payload.bikeId);
 
+    // check if the bike exists
     if (!bike) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
     }
 
+    // check if the bike is available right now
     if (!bike.isAvailable) {
         throw new AppError(
             httpStatus.NOT_FOUND,
@@ -29,18 +31,22 @@ const createRentalIntoDB = async (
     try {
         session.startTransaction();
 
+        // create new rental with payload and decoded userId
         const newRental = await Rental.create({
             ...payload,
             userId: decodedUser.id,
         });
 
+        // update bike availability status to false
         await Bike.findByIdAndUpdate(payload.bikeId, {
             isAvailable: false,
         });
 
+        // commit transaction and end session
         await session.commitTransaction();
         await session.endSession();
 
+        // return response
         return {
             statusCode: httpStatus.CREATED,
             message: 'Rental created successfully',
@@ -56,14 +62,17 @@ const createRentalIntoDB = async (
 const returnBikeIntoDB = async (id: string) => {
     const rental = await Rental.findById(id);
 
+    // check if the rental exists
     if (!rental) {
         throw new AppError(httpStatus.NOT_FOUND, 'Rental not found!');
     }
 
+    // check if the bike is already returned
     if (rental.isReturned) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike is already returned!');
     }
 
+    // retrieve the bike data for updating rental data
     const bike = await Bike.findById(rental.bikeId);
 
     if (!bike) {
@@ -80,6 +89,7 @@ const returnBikeIntoDB = async (id: string) => {
 
         const currentTime = new Date();
 
+        // calculate cost and update relevant rental data
         const updatedRental = await Rental.findByIdAndUpdate(
             id,
             {
@@ -96,13 +106,16 @@ const returnBikeIntoDB = async (id: string) => {
             },
         );
 
+        // update bike availability status to true
         await Bike.findByIdAndUpdate(rental.bikeId, {
             isAvailable: true,
         });
 
+        // commit transaction and end session
         await session.commitTransaction();
         await session.endSession();
 
+        // return response
         return {
             statusCode: httpStatus.OK,
             message: 'Bike returned successfully',
@@ -118,6 +131,7 @@ const returnBikeIntoDB = async (id: string) => {
 const getRentalsFromDB = async (userId: string) => {
     const rentals = await Rental.find({ userId });
 
+    // check if retrieved data is empty
     if (!rentals.length) {
         return {
             statusCode: httpStatus.NOT_FOUND,

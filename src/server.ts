@@ -18,6 +18,7 @@ async function main() {
     }
 }
 
+// handle unhandled rejection
 process.on('unhandledRejection', () => {
     console.log(
         '🥸 unhandledRejection is detected. Shutting down the server...',
@@ -32,6 +33,7 @@ process.on('unhandledRejection', () => {
     }
 });
 
+// handle uncaught exception
 process.on('uncaughtException', () => {
     console.log(
         '🤬 uncaughtException is detected. Shutting down the server...',

@@ -21,19 +21,24 @@ const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
 const auth = (...authorizedRoles) => {
     return (0, catchAsync_1.default)((req, _res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const authHeader = req.headers.authorization;
+        // check if auth header is sent
         if (!authHeader) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
-        const token = authHeader.split(' ')[1];
+        const token = authHeader.split(' ')[1]; // split and retrieve token
+        // check if token is present
         if (!token) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
+        // decode the token
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
         const { id, role } = decoded;
+        // check if user exists from the decoded user id
         const user = yield user_model_1.User.findById(id);
         if (!user) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
         }
+        // check if the decoded user is authorized
         if (authorizedRoles && !authorizedRoles.includes(role)) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
