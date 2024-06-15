@@ -2,9 +2,9 @@ import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
 import { UserRoles } from './user.constant';
-import { IUser } from './user.interface';
+import { IUser, UserModel } from './user.interface';
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUser, UserModel>(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
@@ -31,4 +31,11 @@ userSchema.post('save', function (doc, next) {
     next();
 });
 
-export const User = model<IUser>('User', userSchema);
+userSchema.statics.comparePassword = async function (
+    plain: string,
+    hashed: string,
+) {
+    return await bcrypt.compare(plain, hashed);
+};
+
+export const User = model<IUser, UserModel>('User', userSchema);
