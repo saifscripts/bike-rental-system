@@ -44,11 +44,14 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     };
     // create access token
     const accessToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_exp_in);
+    // create refresh token
+    const refreshToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_refresh_secret, config_1.default.jwt_refresh_exp_in);
     user.password = undefined; // remove password field
     return {
         statusCode: http_status_1.default.OK,
         message: 'User logged in successfully',
         token: accessToken,
+        refreshToken,
         data: user,
     };
 });

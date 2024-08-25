@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { UserRoles } from '../user/user.constant';
 
 const signupValidationSchema = z.object({
     body: z.object({
@@ -26,10 +25,6 @@ const signupValidationSchema = z.object({
                 required_error: 'Address is required',
             })
             .min(1, 'Address cannot be an empty string'),
-        role: z.enum(UserRoles, {
-            required_error: 'Role is required!',
-            invalid_type_error: "Role must be 'admin' or 'user'",
-        }),
     }),
 });
 

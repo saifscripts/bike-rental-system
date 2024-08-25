@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthValidations = void 0;
 const zod_1 = require("zod");
-const user_constant_1 = require("../user/user.constant");
 const signupValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
         name: zod_1.z
@@ -28,10 +27,6 @@ const signupValidationSchema = zod_1.z.object({
             required_error: 'Address is required',
         })
             .min(1, 'Address cannot be an empty string'),
-        role: zod_1.z.enum(user_constant_1.UserRoles, {
-            required_error: 'Role is required!',
-            invalid_type_error: "Role must be 'admin' or 'user'",
-        }),
     }),
 });
 const loginValidationSchema = zod_1.z.object({
