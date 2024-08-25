@@ -1,20 +1,26 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
-import { UserValidations } from '../user/user.validation';
 import { AuthControllers } from './auth.controller';
+import { AuthValidations } from './auth.validation';
 
 const router = express.Router();
 
 router.post(
     '/signup',
-    validateRequest(UserValidations.signupValidationSchema),
+    validateRequest(AuthValidations.signupValidationSchema),
     AuthControllers.signup,
 );
 
 router.post(
     '/login',
-    validateRequest(UserValidations.loginValidationSchema),
+    validateRequest(AuthValidations.loginValidationSchema),
     AuthControllers.login,
+);
+
+router.post(
+    '/refresh-token',
+    validateRequest(AuthValidations.refreshTokenValidationSchema),
+    AuthControllers.refreshToken,
 );
 
 export const AuthRoutes = router;

@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { ILoginCredentials, IUser } from '../user/user.interface';
@@ -57,7 +58,39 @@ const login = async (payload: ILoginCredentials) => {
     };
 };
 
+const refreshToken = async (token: string) => {
+    const decoded = jwt.verify(
+        token,
+        config.jwt_refresh_secret as string,
+    ) as JwtPayload;
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
+    const jwtPayload = {
+        id: user._id,
+        role: user.role,
+    };
+
+    const accessToken = createToken(
+        jwtPayload,
+        config.jwt_access_secret as string,
+        config.jwt_access_exp_in as string,
+    );
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Successfully retrieved refresh token!',
+        token: accessToken,
+        data: null,
+    };
+};
+
 export const AuthServices = {
     signup,
     login,
+    refreshToken,
 };
