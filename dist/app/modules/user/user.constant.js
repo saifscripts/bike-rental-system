@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRoles = exports.USER_ROLE = void 0;
 exports.USER_ROLE = {
-    admin: 'admin',
-    user: 'user',
+    ADMIN: 'ADMIN',
+    USER: 'USER',
 };
-exports.UserRoles = ['admin', 'user'];
+exports.UserRoles = ['ADMIN', 'USER'];

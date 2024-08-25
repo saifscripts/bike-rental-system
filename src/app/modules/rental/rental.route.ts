@@ -10,14 +10,14 @@ const router = express.Router();
 router
     .route('/')
     .post(
-        auth(USER_ROLE.admin, USER_ROLE.user),
+        auth(USER_ROLE.ADMIN, USER_ROLE.USER),
         validateRequest(RentalValidations.createRentalValidationSchema),
         RentalControllers.createRental,
     )
-    .get(auth(USER_ROLE.admin, USER_ROLE.user), RentalControllers.getRentals);
+    .get(auth(USER_ROLE.ADMIN, USER_ROLE.USER), RentalControllers.getRentals);
 
 router
     .route('/:id/return')
-    .put(auth(USER_ROLE.admin), RentalControllers.returnBike);
+    .put(auth(USER_ROLE.ADMIN), RentalControllers.returnBike);
 
 export const RentalRoutes = router;

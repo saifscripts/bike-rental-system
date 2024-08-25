@@ -9,9 +9,9 @@ const router = express.Router();
 
 router
     .route('/me')
-    .get(auth(USER_ROLE.admin, USER_ROLE.user), UserControllers.getProfile)
+    .get(auth(USER_ROLE.ADMIN, USER_ROLE.USER), UserControllers.getProfile)
     .put(
-        auth(USER_ROLE.admin, USER_ROLE.user),
+        auth(USER_ROLE.ADMIN, USER_ROLE.USER),
         validateRequest(UserValidations.updateProfileValidationSchema),
         UserControllers.updateProfile,
     );

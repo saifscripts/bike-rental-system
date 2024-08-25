@@ -10,7 +10,7 @@ const router = express.Router();
 router
     .route('/')
     .post(
-        auth(USER_ROLE.admin),
+        auth(USER_ROLE.ADMIN),
         validateRequest(BikeValidations.createBikeValidationSchema),
         BikeControllers.createBike,
     )
@@ -19,10 +19,10 @@ router
 router
     .route('/:id')
     .put(
-        auth(USER_ROLE.admin),
+        auth(USER_ROLE.ADMIN),
         validateRequest(BikeValidations.updateBikeValidationSchema),
         BikeControllers.updateBike,
     )
-    .delete(auth(USER_ROLE.admin), BikeControllers.deleteBike);
+    .delete(auth(USER_ROLE.ADMIN), BikeControllers.deleteBike);
 
 export const BikeRoutes = router;

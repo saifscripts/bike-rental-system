@@ -13,9 +13,9 @@ const rental_validation_1 = require("./rental.validation");
 const router = express_1.default.Router();
 router
     .route('/')
-    .post((0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), (0, validateRequest_1.default)(rental_validation_1.RentalValidations.createRentalValidationSchema), rental_controller_1.RentalControllers.createRental)
-    .get((0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), rental_controller_1.RentalControllers.getRentals);
+    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(rental_validation_1.RentalValidations.createRentalValidationSchema), rental_controller_1.RentalControllers.createRental)
+    .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), rental_controller_1.RentalControllers.getRentals);
 router
     .route('/:id/return')
-    .put((0, auth_1.default)(user_constant_1.USER_ROLE.admin), rental_controller_1.RentalControllers.returnBike);
+    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), rental_controller_1.RentalControllers.returnBike);
 exports.RentalRoutes = router;

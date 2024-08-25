@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const user_model_1 = require("../user/user.model");
@@ -51,7 +52,26 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         data: user,
     };
 });
+const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_refresh_secret);
+    const user = yield user_model_1.User.findById(decoded.id);
+    if (!user) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+    }
+    const jwtPayload = {
+        id: user._id,
+        role: user.role,
+    };
+    const accessToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_exp_in);
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Successfully retrieved refresh token!',
+        token: accessToken,
+        data: null,
+    };
+});
 exports.AuthServices = {
     signup,
     login,
+    refreshToken,
 };
