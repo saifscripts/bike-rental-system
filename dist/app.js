@@ -14,7 +14,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // routes
-app.use('/api/', routes_1.default);
+app.use('/api/v1', routes_1.default);
 // test route
 app.get('/', (_req, res) => {
     res.status(http_status_1.default.OK).json({
