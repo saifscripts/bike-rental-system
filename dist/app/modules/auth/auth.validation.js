@@ -50,8 +50,21 @@ const refreshTokenValidationSchema = zod_1.z.object({
         }),
     }),
 });
+const changePasswordValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        currentPassword: zod_1.z.string({
+            required_error: 'Current password is required',
+        }),
+        newPassword: zod_1.z
+            .string({
+            required_error: 'Password is required',
+        })
+            .min(6, 'Password must be at least 6 characters long'),
+    }),
+});
 exports.AuthValidations = {
     signupValidationSchema,
     loginValidationSchema,
     refreshTokenValidationSchema,
+    changePasswordValidationSchema,
 };

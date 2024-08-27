@@ -8,7 +8,12 @@ import router from './app/routes';
 const app = express();
 
 // parsers
-app.use(cors());
+app.use(
+    cors({
+        origin: ['http://localhost:5173'],
+        credentials: true,
+    }),
+);
 app.use(express.json());
 
 // routes
