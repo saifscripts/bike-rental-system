@@ -36,11 +36,9 @@ const loginValidationSchema = zod_1.z.object({
             required_error: 'Email is required',
         })
             .email('Invalid email address'),
-        password: zod_1.z
-            .string({
+        password: zod_1.z.string({
             required_error: 'Password is required',
-        })
-            .min(6, 'Password must be at least 6 characters long'),
+        }),
     }),
 });
 const refreshTokenValidationSchema = zod_1.z.object({
