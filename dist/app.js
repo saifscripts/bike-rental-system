@@ -10,11 +10,12 @@ const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalEr
 const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
 const routes_1 = __importDefault(require("./app/routes"));
 const app = (0, express_1.default)();
-// parsers
-app.use((0, cors_1.default)({
-    origin: ['http://localhost:5173'],
+const corsOptions = {
+    origin: ['http://localhost:5173', 'https://bikelagbe.vercel.app'],
     credentials: true,
-}));
+};
+// parsers
+app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 // routes
 app.use('/api/v1', routes_1.default);
