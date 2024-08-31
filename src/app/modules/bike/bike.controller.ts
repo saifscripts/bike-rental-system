@@ -9,8 +9,8 @@ const createBike = catchAsync(async (req, res) => {
 });
 
 // Route: /api/bikes (GET)
-const getBikes = catchAsync(async (_req, res) => {
-    const result = await BikeServices.getBikesFromDB();
+const getBikes = catchAsync(async (req, res) => {
+    const result = await BikeServices.getBikesFromDB(req.query);
     sendResponse(res, result);
 });
 

@@ -14,7 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BikeServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
+const QueryBuilder_1 = __importDefault(require("../../builders/QueryBuilder"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const bike_constant_1 = require("./bike.constant");
 const bike_model_1 = require("./bike.model");
 const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const newBike = yield bike_model_1.Bike.create(payload);
@@ -24,20 +26,29 @@ const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function
         data: newBike,
     };
 });
-const getBikesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const bikes = yield bike_model_1.Bike.find();
-    // check if retrieved data is empty
-    if (!bikes.length) {
-        return {
-            statusCode: http_status_1.default.NOT_FOUND,
-            message: 'No Data Found',
-            data: [],
-        };
-    }
+const getBikesFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const bikeQuery = new QueryBuilder_1.default(bike_model_1.Bike.find(), query)
+        .search(bike_constant_1.BikeSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    // console.log(bikeQuery);
+    const bikes = yield bikeQuery.modelQuery;
+    const meta = yield bikeQuery.countTotal();
+    // // check if retrieved data is empty
+    // if (!bikes.length) {
+    //     return {
+    //         statusCode: httpStatus.NOT_FOUND,
+    //         message: 'No Data Found',
+    //         data: [],
+    //     };
+    // }
     return {
         statusCode: http_status_1.default.OK,
         message: 'Bikes retrieved successfully',
         data: bikes,
+        meta,
     };
 });
 const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {

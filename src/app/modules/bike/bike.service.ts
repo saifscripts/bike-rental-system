@@ -1,5 +1,7 @@
 import httpStatus from 'http-status';
+import QueryBuilder from '../../builders/QueryBuilder';
 import AppError from '../../errors/AppError';
+import { BikeSearchableFields } from './bike.constant';
 import { IBike } from './bike.interface';
 import { Bike } from './bike.model';
 
@@ -13,22 +15,32 @@ const createBikeIntoDB = async (payload: IBike) => {
     };
 };
 
-const getBikesFromDB = async () => {
-    const bikes = await Bike.find();
+const getBikesFromDB = async (query: Record<string, unknown>) => {
+    const bikeQuery = new QueryBuilder(Bike.find(), query)
+        .search(BikeSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
 
-    // check if retrieved data is empty
-    if (!bikes.length) {
-        return {
-            statusCode: httpStatus.NOT_FOUND,
-            message: 'No Data Found',
-            data: [],
-        };
-    }
+    // console.log(bikeQuery);
+    const bikes = await bikeQuery.modelQuery;
+    const meta = await bikeQuery.countTotal();
+
+    // // check if retrieved data is empty
+    // if (!bikes.length) {
+    //     return {
+    //         statusCode: httpStatus.NOT_FOUND,
+    //         message: 'No Data Found',
+    //         data: [],
+    //     };
+    // }
 
     return {
         statusCode: httpStatus.OK,
         message: 'Bikes retrieved successfully',
         data: bikes,
+        meta,
     };
 };
 

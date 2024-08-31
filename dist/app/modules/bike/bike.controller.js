@@ -22,8 +22,8 @@ const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     (0, sendResponse_1.default)(res, result);
 }));
 // Route: /api/bikes (GET)
-const getBikes = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield bike_service_1.BikeServices.getBikesFromDB();
+const getBikes = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield bike_service_1.BikeServices.getBikesFromDB(req.query);
     (0, sendResponse_1.default)(res, result);
 }));
 // Route: /api/bikes/:id (PUT)
