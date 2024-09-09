@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from 'express';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { ZodError } from 'zod';
+import config from '../config';
 import AppError from '../errors/AppError';
 import handleCastError from '../errors/handleCastError';
 import handleDuplicateError from '../errors/handleDuplicateError';
@@ -66,7 +67,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
         statusCode,
         message,
         errorMessages,
-        stack: err?.stack,
+        stack: config.NODE_ENV === 'production' && err?.stack,
     });
 };
 

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_status_1 = __importDefault(require("http-status"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const zod_1 = require("zod");
+const config_1 = __importDefault(require("../config"));
 const AppError_1 = __importDefault(require("../errors/AppError"));
 const handleCastError_1 = __importDefault(require("../errors/handleCastError"));
 const handleDuplicateError_1 = __importDefault(require("../errors/handleDuplicateError"));
@@ -71,7 +72,7 @@ const globalErrorHandler = (err, _req, res, _next) => {
         statusCode,
         message,
         errorMessages,
-        stack: err === null || err === void 0 ? void 0 : err.stack,
+        stack: config_1.default.NODE_ENV === 'production' && (err === null || err === void 0 ? void 0 : err.stack),
     });
 };
 exports.default = globalErrorHandler;
