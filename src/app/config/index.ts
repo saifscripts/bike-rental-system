@@ -2,6 +2,8 @@ import 'dotenv/config';
 
 export default {
     NODE_ENV: process.env.NODE_ENV,
+    base_url: process.env.BASE_URL,
+    client_base_url: process.env.CLIENT_BASE_URL,
     port: process.env.PORT,
     db_uri: process.env.DB_URI,
     bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
@@ -9,4 +11,7 @@ export default {
     jwt_access_exp_in: process.env.JWT_ACCESS_EXP_IN,
     jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
     jwt_refresh_exp_in: process.env.JWT_REFRESH_EXP_IN,
+    store_id: process.env.STORE_ID,
+    signature_key: process.env.SIGNATURE_KEY,
+    payment_base_url: process.env.PAYMENT_BASE_URL,
 };

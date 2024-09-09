@@ -44,6 +44,21 @@ const getBikesFromDB = async (query: Record<string, unknown>) => {
     };
 };
 
+const getSingleBikeFromDB = async (id: string) => {
+    const bike = await Bike.findById(id);
+
+    // check if the bike exist
+    if (!bike) {
+        throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
+    }
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Bike fetched successfully',
+        data: bike,
+    };
+};
+
 const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {
     const isBikeExists = await Bike.findById(id);
 
@@ -85,6 +100,7 @@ const deleteBikeFromDB = async (id: string) => {
 export const BikeServices = {
     createBikeIntoDB,
     getBikesFromDB,
+    getSingleBikeFromDB,
     updateBikeIntoDB,
     deleteBikeFromDB,
 };

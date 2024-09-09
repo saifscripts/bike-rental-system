@@ -1,8 +1,14 @@
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import config from '../../config';
 import AppError from '../../errors/AppError';
 import { Bike } from '../bike/bike.model';
+import {
+    generateTransactionId,
+    initiatePayment,
+} from '../payment/payment.utils';
+import { User } from '../user/user.model';
 import { IRental } from './rental.interface';
 import { Rental } from './rental.model';
 import { calculateTotalCost } from './rental.util';
@@ -11,6 +17,15 @@ const createRentalIntoDB = async (
     decodedUser: JwtPayload,
     payload: Pick<IRental, 'userId' | 'bikeId' | 'startTime'>,
 ) => {
+    const userId = decodedUser.id;
+
+    const user = await User.findById(userId);
+
+    // check if the user exists
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
     const bike = await Bike.findById(payload.bikeId);
 
     // check if the bike exists
@@ -26,37 +41,38 @@ const createRentalIntoDB = async (
         );
     }
 
-    const session = await mongoose.startSession();
+    const txnId = generateTransactionId();
 
-    try {
-        session.startTransaction();
+    const paymentSession = await initiatePayment({
+        txnId,
+        amount: 100,
+        successURL: `${config.base_url}/api/v1/payment/rental/success?TXNID=${txnId}`,
+        failURL: `${config.base_url}/api/v1/payment/rental/fail?TXNID=${txnId}`,
+        cancelURL: `${config.client_base_url}/bike/${payload.bikeId}`,
+        customerName: user.name,
+        customerEmail: user.email,
+        customerPhone: user.phone,
+        customerAddress: user.address,
+    });
 
-        // create new rental with payload and decoded userId
-        const newRental = await Rental.create({
-            ...payload,
-            userId: decodedUser.id,
-        });
-
-        // update bike availability status to false
-        await Bike.findByIdAndUpdate(payload.bikeId, {
-            isAvailable: false,
-        });
-
-        // commit transaction and end session
-        await session.commitTransaction();
-        await session.endSession();
-
-        // return response
-        return {
-            statusCode: httpStatus.CREATED,
-            message: 'Rental created successfully',
-            data: newRental,
-        };
-    } catch (error) {
-        await session.abortTransaction();
-        await session.endSession();
-        throw error;
+    if (!paymentSession?.result) {
+        throw new AppError(
+            httpStatus.SERVICE_UNAVAILABLE,
+            'Failed to initiate payment!',
+        );
     }
+
+    await Rental.create({
+        ...payload,
+        userId,
+        txnId,
+    });
+
+    return {
+        statusCode: httpStatus.CREATED,
+        message: 'Rental created successfully',
+        data: paymentSession,
+    };
 };
 
 const returnBikeIntoDB = async (id: string) => {

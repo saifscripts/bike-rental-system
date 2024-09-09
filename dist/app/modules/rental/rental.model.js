@@ -25,13 +25,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rental = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const rental_constant_1 = require("./rental.constant");
 const RentalSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     bikeId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Bike', required: true },
+    txnId: { type: String, required: true, unique: true },
     startTime: { type: Date, required: true },
     returnTime: { type: Date, default: null },
     totalCost: { type: Number, default: 0 },
     isReturned: { type: Boolean, default: false },
+    isConfirmed: { type: Boolean, default: false },
+    paymentStatus: {
+        type: String,
+        enum: rental_constant_1.PaymentStatus,
+        default: rental_constant_1.PAYMENT_STATUS.UNPAID,
+    },
 }, {
     timestamps: true,
 });

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+            rel="stylesheet"
+        />
+        <title>Payment Success</title>
+        <style>
+            :root {
+                --primary: 47.9 95.8% 53.1%;
+                --primary-foreground: 26 83.3% 14.1%;
+                --secondary: 60 4.8% 95.9%;
+                --secondary-foreground: 24 9.8% 10%;
+                --destructive: 0 84.2% 60.2%;
+                --destructive-foreground: 60 9.1% 97.8%;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Open Sans', sans-serif;
+                background-color: hsl(var(--secondary));
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container {
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin: 24px;
+                padding: 24px;
+                text-align: center;
+                max-width: 500px;
+                width: 100%;
+            }
+
+            .title {
+                color: #28a745;
+                font-size: 24px;
+                margin: 0 0 20px 0;
+            }
+
+            p {
+                color: hsl(var(--primary-foreground));
+                font-size: 16px;
+                margin: 0 0 20px 0;
+            }
+
+            .cta-button {
+                background-color: hsl(var(--primary));
+                color: hsl(var(--primary-foreground));
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                border: none;
+                border-radius: 4px;
+                padding: 12px 24px;
+                font-size: 16px;
+                text-decoration: none;
+                display: inline-block;
+                cursor: pointer;
+                transition: background-color 0.5s ease;
+            }
+
+            .cta-button:hover {
+                filter: brightness(102%);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="title">Payment Successful!</h1>
+            <p>
+                Your payment has been processed successfully. Thank you for
+                booking.
+            </p>
+            <a href="{{dashboard-link}}" class="cta-button">Go to Dashboard</a>
+        </div>
+    </body>
+</html>

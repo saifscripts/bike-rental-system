@@ -51,6 +51,18 @@ const getBikesFromDB = (query) => __awaiter(void 0, void 0, void 0, function* ()
         meta,
     };
 });
+const getSingleBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const bike = yield bike_model_1.Bike.findById(id);
+    // check if the bike exist
+    if (!bike) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
+    }
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Bike fetched successfully',
+        data: bike,
+    };
+});
 const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isBikeExists = yield bike_model_1.Bike.findById(id);
     // check if the bike exist
@@ -84,6 +96,7 @@ const deleteBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
 exports.BikeServices = {
     createBikeIntoDB,
     getBikesFromDB,
+    getSingleBikeFromDB,
     updateBikeIntoDB,
     deleteBikeFromDB,
 };

@@ -15,11 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentalServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const bike_model_1 = require("../bike/bike.model");
+const payment_utils_1 = require("../payment/payment.utils");
+const user_model_1 = require("../user/user.model");
 const rental_model_1 = require("./rental.model");
 const rental_util_1 = require("./rental.util");
 const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = decodedUser.id;
+    const user = yield user_model_1.User.findById(userId);
+    // check if the user exists
+    if (!user) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+    }
     const bike = yield bike_model_1.Bike.findById(payload.bikeId);
     // check if the bike exists
     if (!bike) {
@@ -29,30 +38,28 @@ const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, v
     if (!bike.isAvailable) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike is not available right now!');
     }
-    const session = yield mongoose_1.default.startSession();
-    try {
-        session.startTransaction();
-        // create new rental with payload and decoded userId
-        const newRental = yield rental_model_1.Rental.create(Object.assign(Object.assign({}, payload), { userId: decodedUser.id }));
-        // update bike availability status to false
-        yield bike_model_1.Bike.findByIdAndUpdate(payload.bikeId, {
-            isAvailable: false,
-        });
-        // commit transaction and end session
-        yield session.commitTransaction();
-        yield session.endSession();
-        // return response
-        return {
-            statusCode: http_status_1.default.CREATED,
-            message: 'Rental created successfully',
-            data: newRental,
-        };
+    const txnId = (0, payment_utils_1.generateTransactionId)();
+    const paymentSession = yield (0, payment_utils_1.initiatePayment)({
+        txnId,
+        amount: 100,
+        successURL: `${config_1.default.base_url}/api/v1/payment/rental/success?TXNID=${txnId}`,
+        failURL: `${config_1.default.base_url}/api/v1/payment/rental/fail?TXNID=${txnId}`,
+        cancelURL: `${config_1.default.client_base_url}/bike/${payload.bikeId}`,
+        customerName: user.name,
+        customerEmail: user.email,
+        customerPhone: user.phone,
+        customerAddress: user.address,
+    });
+    if (!(paymentSession === null || paymentSession === void 0 ? void 0 : paymentSession.result)) {
+        throw new AppError_1.default(http_status_1.default.SERVICE_UNAVAILABLE, 'Failed to initiate payment!');
     }
-    catch (error) {
-        yield session.abortTransaction();
-        yield session.endSession();
-        throw error;
-    }
+    yield rental_model_1.Rental.create(Object.assign(Object.assign({}, payload), { userId,
+        txnId }));
+    return {
+        statusCode: http_status_1.default.CREATED,
+        message: 'Rental created successfully',
+        data: paymentSession,
+    };
 });
 const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const rental = yield rental_model_1.Rental.findById(id);

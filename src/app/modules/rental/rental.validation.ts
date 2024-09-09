@@ -5,7 +5,7 @@ const createRentalValidationSchema = z.object({
         bikeId: z.string({ required_error: 'Bike ID is required' }),
         startTime: z
             .string({ required_error: 'Start time is required' })
-            .datetime(),
+            .datetime({ offset: true }),
     }),
 });
 

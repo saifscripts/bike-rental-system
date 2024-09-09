@@ -14,6 +14,12 @@ const getBikes = catchAsync(async (req, res) => {
     sendResponse(res, result);
 });
 
+// Route: /api/bikes/:id (GET)
+const getSingleBike = catchAsync(async (req, res) => {
+    const result = await BikeServices.getSingleBikeFromDB(req.params.id);
+    sendResponse(res, result);
+});
+
 // Route: /api/bikes/:id (PUT)
 const updateBike = catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -31,6 +37,7 @@ const deleteBike = catchAsync(async (req, res) => {
 export const BikeControllers = {
     createBike,
     getBikes,
+    getSingleBike,
     updateBike,
     deleteBike,
 };
