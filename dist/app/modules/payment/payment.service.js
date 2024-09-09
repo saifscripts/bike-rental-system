@@ -13,12 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentServices = void 0;
-const fs_1 = require("fs");
 const mongoose_1 = __importDefault(require("mongoose"));
-const path_1 = require("path");
 const config_1 = __importDefault(require("../../config"));
 const bike_model_1 = require("../bike/bike.model");
 const rental_model_1 = require("../rental/rental.model");
+const payment_constant_1 = require("./payment.constant");
 const payment_utils_1 = require("./payment.utils");
 const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyResponse = yield (0, payment_utils_1.verifyPayment)(txnId);
@@ -34,9 +33,7 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
             yield bike_model_1.Bike.findByIdAndUpdate(rental === null || rental === void 0 ? void 0 : rental.bikeId, { isAvailable: false }, { session });
             yield session.commitTransaction();
             yield session.endSession();
-            const filePath = (0, path_1.join)(__dirname + '/success.html');
-            const successTemplate = (0, fs_1.readFileSync)(filePath, 'utf-8').replace('{{dashboard-link}}', `${config_1.default.client_base_url}/dashboard/bookings`);
-            return successTemplate;
+            return payment_constant_1.successPage.replace('{{dashboard-link}}', `${config_1.default.client_base_url}/dashboard/bookings`);
         }
         catch (_a) {
             yield session.abortTransaction();
@@ -46,11 +43,9 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
     }
     if (verifyResponse && verifyResponse.pay_status === 'Failed') {
         const rental = yield rental_model_1.Rental.findOne({ txnId });
-        const filePath = (0, path_1.join)(__dirname + '/fail.html');
-        const failTemplate = (0, fs_1.readFileSync)(filePath, 'utf-8')
+        return payment_constant_1.failPage
             .replace('{{retry-link}}', `${config_1.default.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`)
             .replace('{{back-link}}', `${config_1.default.client_base_url}/bike/${rental === null || rental === void 0 ? void 0 : rental.bikeId}`);
-        return failTemplate;
     }
     return 'Something went wrong!';
 });
