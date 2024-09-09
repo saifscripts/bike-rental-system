@@ -24,6 +24,7 @@ app.get('/', (_req: Request, res: Response) => {
     res.status(httpStatus.OK).json({
         success: true,
         statusCode: 200,
+        dirname: __dirname,
         message: 'App is running successfully!',
     });
 });
