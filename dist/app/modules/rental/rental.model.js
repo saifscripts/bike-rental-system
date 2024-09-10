@@ -30,7 +30,7 @@ const RentalSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     bikeId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Bike', required: true },
     txnId: { type: String, required: true, unique: true },
-    finalTxnId: { type: String, unique: true },
+    finalTxnId: { type: String },
     startTime: { type: Date, required: true },
     returnTime: { type: Date, default: null },
     totalCost: { type: Number, default: 0 },
