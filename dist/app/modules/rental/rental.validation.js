@@ -10,6 +10,14 @@ const createRentalValidationSchema = zod_1.z.object({
             .datetime({ offset: true }),
     }),
 });
+const returnBikeValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        returnTime: zod_1.z
+            .string({ required_error: 'Return time is required' })
+            .datetime({ offset: true }),
+    }),
+});
 exports.RentalValidations = {
     createRentalValidationSchema,
+    returnBikeValidationSchema,
 };

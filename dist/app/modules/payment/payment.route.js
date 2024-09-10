@@ -7,6 +7,6 @@ exports.PaymentRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const payment_controller_1 = require("./payment.controller");
 const router = express_1.default.Router();
-router.route('/rental/success').post(payment_controller_1.PaymentControllers.confirmRental);
-router.route('/rental/fail').post(payment_controller_1.PaymentControllers.confirmRental);
+router.route('/confirm-rental').post(payment_controller_1.PaymentControllers.confirmRental);
+router.route('/complete-rental').post(payment_controller_1.PaymentControllers.completeRental);
 exports.PaymentRoutes = router;

@@ -45,11 +45,11 @@ const createRentalIntoDB = async (
 
     const txnId = generateTransactionId();
 
-    const paymentSession = await initiatePayment({
+    const paymentResponse = await initiatePayment({
         txnId,
         amount: 100,
-        successURL: `${config.base_url}/api/v1/payment/rental/success?TXNID=${txnId}`,
-        failURL: `${config.base_url}/api/v1/payment/rental/fail?TXNID=${txnId}`,
+        successURL: `${config.base_url}/api/v1/payment/confirm-rental?TXNID=${txnId}`,
+        failURL: `${config.base_url}/api/v1/payment/confirm-rental?TXNID=${txnId}`,
         cancelURL: `${config.client_base_url}/bike/${payload.bikeId}`,
         customerName: user.name,
         customerEmail: user.email,
@@ -57,7 +57,7 @@ const createRentalIntoDB = async (
         customerAddress: user.address,
     });
 
-    if (!paymentSession?.result) {
+    if (!paymentResponse?.result) {
         throw new AppError(
             httpStatus.SERVICE_UNAVAILABLE,
             'Failed to initiate payment!',
@@ -73,12 +73,67 @@ const createRentalIntoDB = async (
     return {
         statusCode: httpStatus.CREATED,
         message: 'Rental created successfully',
-        data: paymentSession,
+        data: paymentResponse,
     };
 };
 
-const returnBikeIntoDB = async (id: string) => {
-    const rental = await Rental.findById(id);
+const initiateRemainingPayment = async (rentalId: string) => {
+    const rental = await Rental.findById(rentalId).populate('userId');
+
+    // check if the rental exists
+    if (!rental) {
+        throw new AppError(httpStatus.NOT_FOUND, 'Rental not found!');
+    }
+
+    // check if the bike is returned
+    if (rental.rentalStatus !== RENTAL_STATUS.RETURNED) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Bike is not returned yet!');
+    }
+
+    const user = await User.findById(rental.userId);
+
+    // check if the rental exists
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
+    const txnId = generateTransactionId();
+
+    const paymentResponse = await initiatePayment({
+        txnId,
+        amount: rental.totalCost - rental.paidAmount,
+        successURL: `${config.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
+        failURL: `${config.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
+        cancelURL: `${config.client_base_url}/dashboard/bookings`,
+        customerName: user.name,
+        customerEmail: user.email,
+        customerPhone: user.phone,
+        customerAddress: user.address,
+    });
+
+    if (!paymentResponse?.result) {
+        throw new AppError(
+            httpStatus.SERVICE_UNAVAILABLE,
+            'Failed to initiate payment!',
+        );
+    }
+
+    await Rental.findByIdAndUpdate(rentalId, {
+        finalTxnId: txnId,
+    });
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Payment initiated successfully',
+        data: paymentResponse,
+    };
+};
+
+const returnBikeIntoDB = async (
+    rentalId: string,
+    payload: Pick<IRental, 'returnTime'>,
+) => {
+    const rental = await Rental.findById(rentalId);
 
     // check if the rental exists
     if (!rental) {
@@ -113,11 +168,9 @@ const returnBikeIntoDB = async (id: string) => {
     try {
         session.startTransaction();
 
-        const currentTime = new Date();
-
         const totalCost = calculateTotalCost(
             rental.startTime,
-            currentTime,
+            payload.returnTime,
             bike.pricePerHour,
         );
 
@@ -131,13 +184,13 @@ const returnBikeIntoDB = async (id: string) => {
 
         // calculate cost and update relevant rental data
         const updatedRental = await Rental.findByIdAndUpdate(
-            id,
+            rentalId,
             {
-                returnTime: currentTime,
+                returnTime: payload.returnTime,
+                rentalStatus: RENTAL_STATUS.RETURNED,
                 totalCost,
                 paidAmount,
                 paymentStatus,
-                rentalStatus: RENTAL_STATUS.RETURNED,
             },
             {
                 new: true,
@@ -206,6 +259,7 @@ const getRentalsFromDB = async (
 
 export const RentalServices = {
     createRentalIntoDB,
+    initiateRemainingPayment,
     returnBikeIntoDB,
     getRentalsFromDB,
 };

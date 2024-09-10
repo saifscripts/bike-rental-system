@@ -9,6 +9,15 @@ const createRentalValidationSchema = z.object({
     }),
 });
 
+const returnBikeValidationSchema = z.object({
+    body: z.object({
+        returnTime: z
+            .string({ required_error: 'Return time is required' })
+            .datetime({ offset: true }),
+    }),
+});
+
 export const RentalValidations = {
     createRentalValidationSchema,
+    returnBikeValidationSchema,
 };

@@ -8,10 +8,19 @@ const createRental = catchAsync(async (req, res) => {
     sendResponse(res, result);
 });
 
+const initiateRemainingPayment = catchAsync(async (req, res) => {
+    const result = await RentalServices.initiateRemainingPayment(
+        req.params.rentalId,
+    );
+    sendResponse(res, result);
+});
+
 // Route: /api/rentals/:id/return (PUT)
 const returnBike = catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const result = await RentalServices.returnBikeIntoDB(id);
+    const result = await RentalServices.returnBikeIntoDB(
+        req.params.rentalId,
+        req.body,
+    );
     sendResponse(res, result);
 });
 
@@ -26,6 +35,7 @@ const getRentals = catchAsync(async (req, res) => {
 
 export const RentalControllers = {
     createRental,
+    initiateRemainingPayment,
     returnBike,
     getRentals,
 };

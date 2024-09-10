@@ -5,10 +5,18 @@ const confirmRental = catchAsync(async (req, res) => {
     const result = await PaymentServices.confirmRental(
         req.query.TXNID as string,
     );
+    res.send(result);
+});
+
+const completeRental = catchAsync(async (req, res) => {
+    const result = await PaymentServices.completeRental(
+        req.query.TXNID as string,
+    );
 
     res.send(result);
 });
 
 export const PaymentControllers = {
     confirmRental,
+    completeRental,
 };

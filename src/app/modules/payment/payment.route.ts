@@ -3,7 +3,7 @@ import { PaymentControllers } from './payment.controller';
 
 const router = express.Router();
 
-router.route('/rental/success').post(PaymentControllers.confirmRental);
-router.route('/rental/fail').post(PaymentControllers.confirmRental);
+router.route('/confirm-rental').post(PaymentControllers.confirmRental);
+router.route('/complete-rental').post(PaymentControllers.completeRental);
 
 export const PaymentRoutes = router;

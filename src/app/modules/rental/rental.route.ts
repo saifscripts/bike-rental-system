@@ -17,7 +17,14 @@ router
     .get(auth(USER_ROLE.ADMIN, USER_ROLE.USER), RentalControllers.getRentals);
 
 router
-    .route('/:id/return')
+    .route('/:rentalId/return')
     .put(auth(USER_ROLE.ADMIN), RentalControllers.returnBike);
+
+router
+    .route('/:rentalId/pay-remaining')
+    .put(
+        auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+        RentalControllers.initiateRemainingPayment,
+    );
 
 export const RentalRoutes = router;

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import config from '../../config';
 import { Bike } from '../bike/bike.model';
-import { RENTAL_STATUS } from '../rental/rental.constant';
+import { PAYMENT_STATUS, RENTAL_STATUS } from '../rental/rental.constant';
 import { Rental } from '../rental/rental.model';
 import { failPage, successPage } from './payment.constant';
 import { verifyPayment } from './payment.utils';
@@ -63,6 +63,42 @@ const confirmRental = async (txnId: string) => {
     return 'Something went wrong!';
 };
 
+const completeRental = async (txnId: string) => {
+    const verifyResponse = await verifyPayment(txnId);
+
+    if (verifyResponse && verifyResponse.pay_status === 'Successful') {
+        // update payment status and paid amount
+        await Rental.findOneAndUpdate(
+            { finalTxnId: txnId },
+            {
+                $set: { paymentStatus: PAYMENT_STATUS.PAID },
+                $inc: { paidAmount: Number(verifyResponse?.amount) },
+            },
+            { new: true },
+        );
+
+        return successPage.replace(
+            '{{dashboard-link}}',
+            `${config.client_base_url}/dashboard/bookings`,
+        );
+    }
+
+    if (verifyResponse && verifyResponse.pay_status === 'Failed') {
+        return failPage
+            .replace(
+                '{{retry-link}}',
+                `${config.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`,
+            )
+            .replace(
+                '{{back-link}}',
+                `${config.client_base_url}/dashboard/bookings`,
+            );
+    }
+
+    return 'Something went wrong!';
+};
+
 export const PaymentServices = {
     confirmRental,
+    completeRental,
 };

@@ -12,6 +12,7 @@ const RentalSchema: Schema = new Schema<IRental>(
         userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         bikeId: { type: Schema.Types.ObjectId, ref: 'Bike', required: true },
         txnId: { type: String, required: true, unique: true },
+        finalTxnId: { type: String, unique: true },
         startTime: { type: Date, required: true },
         returnTime: { type: Date, default: null },
         totalCost: { type: Number, default: 0 },

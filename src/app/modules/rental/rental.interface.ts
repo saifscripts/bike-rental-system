@@ -5,6 +5,7 @@ export interface IRental {
     userId: mongoose.Types.ObjectId;
     bikeId: mongoose.Types.ObjectId;
     txnId: string;
+    finalTxnId: string;
     startTime: Date;
     returnTime: Date;
     totalCost: number;

@@ -19,6 +19,11 @@ const confirmRental = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     const result = yield payment_service_1.PaymentServices.confirmRental(req.query.TXNID);
     res.send(result);
 }));
+const completeRental = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield payment_service_1.PaymentServices.completeRental(req.query.TXNID);
+    res.send(result);
+}));
 exports.PaymentControllers = {
     confirmRental,
+    completeRental,
 };
