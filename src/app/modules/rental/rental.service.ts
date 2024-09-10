@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import QueryBuilder from '../../builders/QueryBuilder';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { Bike } from '../bike/bike.model';
@@ -9,7 +10,7 @@ import {
     initiatePayment,
 } from '../payment/payment.utils';
 import { User } from '../user/user.model';
-import { RENTAL_STATUS } from './rental.constant';
+import { PAYMENT_STATUS, RENTAL_STATUS } from './rental.constant';
 import { IRental } from './rental.interface';
 import { Rental } from './rental.model';
 import { calculateTotalCost } from './rental.util';
@@ -114,16 +115,28 @@ const returnBikeIntoDB = async (id: string) => {
 
         const currentTime = new Date();
 
+        const totalCost = calculateTotalCost(
+            rental.startTime,
+            currentTime,
+            bike.pricePerHour,
+        );
+
+        const paidAmount =
+            totalCost > rental.paidAmount ? rental.paidAmount : totalCost;
+
+        const paymentStatus =
+            totalCost > rental.paidAmount
+                ? PAYMENT_STATUS.UNPAID
+                : PAYMENT_STATUS.PAID;
+
         // calculate cost and update relevant rental data
         const updatedRental = await Rental.findByIdAndUpdate(
             id,
             {
                 returnTime: currentTime,
-                totalCost: calculateTotalCost(
-                    rental.startTime,
-                    currentTime,
-                    bike.pricePerHour,
-                ),
+                totalCost,
+                paidAmount,
+                paymentStatus,
                 rentalStatus: RENTAL_STATUS.RETURNED,
             },
             {
@@ -158,8 +171,21 @@ const returnBikeIntoDB = async (id: string) => {
     }
 };
 
-const getRentalsFromDB = async (userId: string) => {
-    const rentals = await Rental.find({ userId });
+const getRentalsFromDB = async (
+    userId: string,
+    query: Record<string, unknown>,
+) => {
+    const rentalQuery = new QueryBuilder(
+        Rental.find({ userId }).populate('bikeId'),
+        query,
+    )
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const rentals = await rentalQuery.modelQuery;
+    const meta = await rentalQuery.countTotal();
 
     // check if retrieved data is empty
     if (!rentals.length) {
@@ -174,6 +200,7 @@ const getRentalsFromDB = async (userId: string) => {
         statusCode: httpStatus.OK,
         message: 'Rentals retrieved successfully',
         data: rentals,
+        meta,
     };
 };
 

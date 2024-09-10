@@ -17,8 +17,10 @@ const returnBike = catchAsync(async (req, res) => {
 
 // Route: /api/rentals (GET)
 const getRentals = catchAsync(async (req, res) => {
-    const { id } = req.user;
-    const result = await RentalServices.getRentalsFromDB(id);
+    const result = await RentalServices.getRentalsFromDB(
+        req.user.id,
+        req.query,
+    );
     sendResponse(res, result);
 });
 

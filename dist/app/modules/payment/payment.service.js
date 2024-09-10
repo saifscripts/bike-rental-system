@@ -29,6 +29,7 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
             // confirm rental
             const rental = yield rental_model_1.Rental.findOneAndUpdate({ txnId }, {
                 rentalStatus: rental_constant_1.RENTAL_STATUS.ONGOING,
+                paidAmount: Number(verifyResponse === null || verifyResponse === void 0 ? void 0 : verifyResponse.amount),
             }, { new: true, session });
             // update bike availability
             yield bike_model_1.Bike.findByIdAndUpdate(rental === null || rental === void 0 ? void 0 : rental.bikeId, { isAvailable: false }, { session });

@@ -29,8 +29,7 @@ const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 }));
 // Route: /api/rentals (GET)
 const getRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.user;
-    const result = yield rental_service_1.RentalServices.getRentalsFromDB(id);
+    const result = yield rental_service_1.RentalServices.getRentalsFromDB(req.user.id, req.query);
     (0, sendResponse_1.default)(res, result);
 }));
 exports.RentalControllers = {

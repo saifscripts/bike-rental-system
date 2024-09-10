@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentalServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const QueryBuilder_1 = __importDefault(require("../../builders/QueryBuilder"));
 const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const bike_model_1 = require("../bike/bike.model");
@@ -85,10 +86,17 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         session.startTransaction();
         const currentTime = new Date();
+        const totalCost = (0, rental_util_1.calculateTotalCost)(rental.startTime, currentTime, bike.pricePerHour);
+        const paidAmount = totalCost > rental.paidAmount ? rental.paidAmount : totalCost;
+        const paymentStatus = totalCost > rental.paidAmount
+            ? rental_constant_1.PAYMENT_STATUS.UNPAID
+            : rental_constant_1.PAYMENT_STATUS.PAID;
         // calculate cost and update relevant rental data
         const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(id, {
             returnTime: currentTime,
-            totalCost: (0, rental_util_1.calculateTotalCost)(rental.startTime, currentTime, bike.pricePerHour),
+            totalCost,
+            paidAmount,
+            paymentStatus,
             rentalStatus: rental_constant_1.RENTAL_STATUS.RETURNED,
         }, {
             new: true,
@@ -114,8 +122,14 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         throw error;
     }
 });
-const getRentalsFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const rentals = yield rental_model_1.Rental.find({ userId });
+const getRentalsFromDB = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
+    const rentalQuery = new QueryBuilder_1.default(rental_model_1.Rental.find({ userId }).populate('bikeId'), query)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const rentals = yield rentalQuery.modelQuery;
+    const meta = yield rentalQuery.countTotal();
     // check if retrieved data is empty
     if (!rentals.length) {
         return {
@@ -128,6 +142,7 @@ const getRentalsFromDB = (userId) => __awaiter(void 0, void 0, void 0, function*
         statusCode: http_status_1.default.OK,
         message: 'Rentals retrieved successfully',
         data: rentals,
+        meta,
     };
 });
 exports.RentalServices = {

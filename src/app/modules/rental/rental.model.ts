@@ -15,6 +15,7 @@ const RentalSchema: Schema = new Schema<IRental>(
         startTime: { type: Date, required: true },
         returnTime: { type: Date, default: null },
         totalCost: { type: Number, default: 0 },
+        paidAmount: { type: Number, default: 0 },
         rentalStatus: {
             type: String,
             enum: RentalStatus,

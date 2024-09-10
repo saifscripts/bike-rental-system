@@ -20,6 +20,7 @@ const confirmRental = async (txnId: string) => {
                 { txnId },
                 {
                     rentalStatus: RENTAL_STATUS.ONGOING,
+                    paidAmount: Number(verifyResponse?.amount),
                 },
                 { new: true, session },
             );
