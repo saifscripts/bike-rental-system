@@ -33,8 +33,11 @@ const RentalSchema = new mongoose_1.Schema({
     startTime: { type: Date, required: true },
     returnTime: { type: Date, default: null },
     totalCost: { type: Number, default: 0 },
-    isReturned: { type: Boolean, default: false },
-    isConfirmed: { type: Boolean, default: false },
+    status: {
+        type: String,
+        enum: rental_constant_1.RentalStatus,
+        default: rental_constant_1.RENTAL_STATUS.PENDING,
+    },
     paymentStatus: {
         type: String,
         enum: rental_constant_1.PaymentStatus,

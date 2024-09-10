@@ -9,6 +9,7 @@ import {
     initiatePayment,
 } from '../payment/payment.utils';
 import { User } from '../user/user.model';
+import { RENTAL_STATUS } from './rental.constant';
 import { IRental } from './rental.interface';
 import { Rental } from './rental.model';
 import { calculateTotalCost } from './rental.util';
@@ -84,7 +85,15 @@ const returnBikeIntoDB = async (id: string) => {
     }
 
     // check if the bike is already returned
-    if (rental.isReturned) {
+    if (rental.status === RENTAL_STATUS.PENDING) {
+        throw new AppError(
+            httpStatus.NOT_FOUND,
+            "User didn't confirm this rental!",
+        );
+    }
+
+    // check if the bike is already returned
+    if (rental.status === RENTAL_STATUS.RETURNED) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike is already returned!');
     }
 
@@ -115,17 +124,22 @@ const returnBikeIntoDB = async (id: string) => {
                     currentTime,
                     bike.pricePerHour,
                 ),
-                isReturned: true,
+                status: RENTAL_STATUS.RETURNED,
             },
             {
                 new: true,
+                session,
             },
         );
 
         // update bike availability status to true
-        await Bike.findByIdAndUpdate(rental.bikeId, {
-            isAvailable: true,
-        });
+        await Bike.findByIdAndUpdate(
+            rental.bikeId,
+            {
+                isAvailable: true,
+            },
+            { session },
+        );
 
         // commit transaction and end session
         await session.commitTransaction();

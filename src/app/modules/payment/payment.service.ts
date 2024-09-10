@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import config from '../../config';
 import { Bike } from '../bike/bike.model';
+import { RENTAL_STATUS } from '../rental/rental.constant';
 import { Rental } from '../rental/rental.model';
 import { failPage, successPage } from './payment.constant';
 import { verifyPayment } from './payment.utils';
@@ -18,7 +19,7 @@ const confirmRental = async (txnId: string) => {
             const rental = await Rental.findOneAndUpdate(
                 { txnId },
                 {
-                    isConfirmed: true,
+                    status: RENTAL_STATUS.ONGOING,
                 },
                 { new: true, session },
             );

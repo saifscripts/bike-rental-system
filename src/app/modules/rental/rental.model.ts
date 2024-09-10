@@ -1,5 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
-import { PAYMENT_STATUS, PaymentStatus } from './rental.constant';
+import {
+    PAYMENT_STATUS,
+    PaymentStatus,
+    RENTAL_STATUS,
+    RentalStatus,
+} from './rental.constant';
 import { IRental } from './rental.interface';
 
 const RentalSchema: Schema = new Schema<IRental>(
@@ -10,8 +15,11 @@ const RentalSchema: Schema = new Schema<IRental>(
         startTime: { type: Date, required: true },
         returnTime: { type: Date, default: null },
         totalCost: { type: Number, default: 0 },
-        isReturned: { type: Boolean, default: false },
-        isConfirmed: { type: Boolean, default: false },
+        status: {
+            type: String,
+            enum: RentalStatus,
+            default: RENTAL_STATUS.PENDING,
+        },
         paymentStatus: {
             type: String,
             enum: PaymentStatus,

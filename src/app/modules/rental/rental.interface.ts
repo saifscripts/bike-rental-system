@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { PAYMENT_STATUS } from './rental.constant';
+import { PAYMENT_STATUS, RENTAL_STATUS } from './rental.constant';
 
 export interface IRental {
     userId: mongoose.Types.ObjectId;
@@ -8,7 +8,6 @@ export interface IRental {
     startTime: Date;
     returnTime: Date;
     totalCost: number;
-    isReturned: boolean;
-    isConfirmed: boolean;
+    status: keyof typeof RENTAL_STATUS;
     paymentStatus: keyof typeof PAYMENT_STATUS;
 }

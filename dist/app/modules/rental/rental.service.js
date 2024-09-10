@@ -20,6 +20,7 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const bike_model_1 = require("../bike/bike.model");
 const payment_utils_1 = require("../payment/payment.utils");
 const user_model_1 = require("../user/user.model");
+const rental_constant_1 = require("./rental.constant");
 const rental_model_1 = require("./rental.model");
 const rental_util_1 = require("./rental.util");
 const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -68,7 +69,11 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Rental not found!');
     }
     // check if the bike is already returned
-    if (rental.isReturned) {
+    if (rental.status === rental_constant_1.RENTAL_STATUS.PENDING) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User didn't confirm this rental!");
+    }
+    // check if the bike is already returned
+    if (rental.status === rental_constant_1.RENTAL_STATUS.RETURNED) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike is already returned!');
     }
     // retrieve the bike data for updating rental data
@@ -84,14 +89,15 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(id, {
             returnTime: currentTime,
             totalCost: (0, rental_util_1.calculateTotalCost)(rental.startTime, currentTime, bike.pricePerHour),
-            isReturned: true,
+            status: rental_constant_1.RENTAL_STATUS.RETURNED,
         }, {
             new: true,
+            session,
         });
         // update bike availability status to true
         yield bike_model_1.Bike.findByIdAndUpdate(rental.bikeId, {
             isAvailable: true,
-        });
+        }, { session });
         // commit transaction and end session
         yield session.commitTransaction();
         yield session.endSession();

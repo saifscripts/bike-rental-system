@@ -16,6 +16,7 @@ exports.PaymentServices = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = __importDefault(require("../../config"));
 const bike_model_1 = require("../bike/bike.model");
+const rental_constant_1 = require("../rental/rental.constant");
 const rental_model_1 = require("../rental/rental.model");
 const payment_constant_1 = require("./payment.constant");
 const payment_utils_1 = require("./payment.utils");
@@ -27,7 +28,7 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
             session.startTransaction();
             // confirm rental
             const rental = yield rental_model_1.Rental.findOneAndUpdate({ txnId }, {
-                isConfirmed: true,
+                status: rental_constant_1.RENTAL_STATUS.ONGOING,
             }, { new: true, session });
             // update bike availability
             yield bike_model_1.Bike.findByIdAndUpdate(rental === null || rental === void 0 ? void 0 : rental.bikeId, { isAvailable: false }, { session });
