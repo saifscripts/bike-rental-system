@@ -15,7 +15,7 @@ const RentalSchema: Schema = new Schema<IRental>(
         startTime: { type: Date, required: true },
         returnTime: { type: Date, default: null },
         totalCost: { type: Number, default: 0 },
-        status: {
+        rentalStatus: {
             type: String,
             enum: RentalStatus,
             default: RENTAL_STATUS.PENDING,
@@ -30,5 +30,12 @@ const RentalSchema: Schema = new Schema<IRental>(
         timestamps: true,
     },
 );
+
+RentalSchema.pre('find', function (next) {
+    const query = this.getQuery();
+    query.rentalStatus = { $ne: RENTAL_STATUS.PENDING };
+    this.setQuery(query);
+    next();
+});
 
 export const Rental = mongoose.model<IRental>('Rental', RentalSchema);

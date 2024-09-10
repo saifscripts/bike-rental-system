@@ -19,7 +19,7 @@ const confirmRental = async (txnId: string) => {
             const rental = await Rental.findOneAndUpdate(
                 { txnId },
                 {
-                    status: RENTAL_STATUS.ONGOING,
+                    rentalStatus: RENTAL_STATUS.ONGOING,
                 },
                 { new: true, session },
             );

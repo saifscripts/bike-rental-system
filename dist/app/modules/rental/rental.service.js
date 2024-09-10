@@ -69,11 +69,11 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Rental not found!');
     }
     // check if the bike is already returned
-    if (rental.status === rental_constant_1.RENTAL_STATUS.PENDING) {
+    if (rental.rentalStatus === rental_constant_1.RENTAL_STATUS.PENDING) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, "User didn't confirm this rental!");
     }
     // check if the bike is already returned
-    if (rental.status === rental_constant_1.RENTAL_STATUS.RETURNED) {
+    if (rental.rentalStatus === rental_constant_1.RENTAL_STATUS.RETURNED) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike is already returned!');
     }
     // retrieve the bike data for updating rental data
@@ -89,7 +89,7 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(id, {
             returnTime: currentTime,
             totalCost: (0, rental_util_1.calculateTotalCost)(rental.startTime, currentTime, bike.pricePerHour),
-            status: rental_constant_1.RENTAL_STATUS.RETURNED,
+            rentalStatus: rental_constant_1.RENTAL_STATUS.RETURNED,
         }, {
             new: true,
             session,

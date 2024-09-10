@@ -85,7 +85,7 @@ const returnBikeIntoDB = async (id: string) => {
     }
 
     // check if the bike is already returned
-    if (rental.status === RENTAL_STATUS.PENDING) {
+    if (rental.rentalStatus === RENTAL_STATUS.PENDING) {
         throw new AppError(
             httpStatus.NOT_FOUND,
             "User didn't confirm this rental!",
@@ -93,7 +93,7 @@ const returnBikeIntoDB = async (id: string) => {
     }
 
     // check if the bike is already returned
-    if (rental.status === RENTAL_STATUS.RETURNED) {
+    if (rental.rentalStatus === RENTAL_STATUS.RETURNED) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike is already returned!');
     }
 
@@ -124,7 +124,7 @@ const returnBikeIntoDB = async (id: string) => {
                     currentTime,
                     bike.pricePerHour,
                 ),
-                status: RENTAL_STATUS.RETURNED,
+                rentalStatus: RENTAL_STATUS.RETURNED,
             },
             {
                 new: true,

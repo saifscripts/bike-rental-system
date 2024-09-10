@@ -8,6 +8,6 @@ export interface IRental {
     startTime: Date;
     returnTime: Date;
     totalCost: number;
-    status: keyof typeof RENTAL_STATUS;
+    rentalStatus: keyof typeof RENTAL_STATUS;
     paymentStatus: keyof typeof PAYMENT_STATUS;
 }
