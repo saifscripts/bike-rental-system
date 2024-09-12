@@ -37,7 +37,7 @@ const confirmRental = async (txnId: string) => {
 
             return successPage.replace(
                 '{{dashboard-link}}',
-                `${config.client_base_url}/dashboard/bookings`,
+                `${config.client_base_url}/dashboard/my-rentals`,
             );
         } catch {
             await session.abortTransaction();
@@ -79,7 +79,7 @@ const completeRental = async (txnId: string) => {
 
         return successPage.replace(
             '{{dashboard-link}}',
-            `${config.client_base_url}/dashboard/bookings`,
+            `${config.client_base_url}/dashboard/my-rentals`,
         );
     }
 
@@ -91,7 +91,7 @@ const completeRental = async (txnId: string) => {
             )
             .replace(
                 '{{back-link}}',
-                `${config.client_base_url}/dashboard/bookings`,
+                `${config.client_base_url}/dashboard/my-rentals`,
             );
     }
 

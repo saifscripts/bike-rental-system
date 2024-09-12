@@ -104,7 +104,7 @@ const initiateRemainingPayment = async (rentalId: string) => {
         amount: rental.totalCost - rental.paidAmount,
         successURL: `${config.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
         failURL: `${config.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
-        cancelURL: `${config.client_base_url}/dashboard/bookings`,
+        cancelURL: `${config.client_base_url}/dashboard/my-rentals`,
         customerName: user.name,
         customerEmail: user.email,
         customerPhone: user.phone,
