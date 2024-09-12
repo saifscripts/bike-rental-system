@@ -171,7 +171,7 @@ const returnBikeIntoDB = async (
         const totalCost = calculateTotalCost(
             rental.startTime,
             payload.returnTime,
-            bike.pricePerHour,
+            Number(bike.pricePerHour),
         );
 
         const paidAmount =
