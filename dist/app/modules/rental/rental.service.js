@@ -124,7 +124,7 @@ const returnBikeIntoDB = (rentalId, payload) => __awaiter(void 0, void 0, void 0
     const session = yield mongoose_1.default.startSession();
     try {
         session.startTransaction();
-        const totalCost = (0, rental_util_1.calculateTotalCost)(rental.startTime, payload.returnTime, bike.pricePerHour);
+        const totalCost = (0, rental_util_1.calculateTotalCost)(rental.startTime, payload.returnTime, Number(bike.pricePerHour));
         const paidAmount = totalCost > rental.paidAmount ? rental.paidAmount : totalCost;
         const paymentStatus = totalCost > rental.paidAmount
             ? rental_constant_1.PAYMENT_STATUS.UNPAID

@@ -1,7 +1,7 @@
 export interface IBike {
     name: string;
     description: string;
-    pricePerHour: number;
+    pricePerHour: string;
     isAvailable: boolean;
     cc: string;
     year: string;

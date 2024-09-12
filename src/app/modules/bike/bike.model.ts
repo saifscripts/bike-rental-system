@@ -5,7 +5,7 @@ const BikeSchema = new Schema<IBike>(
     {
         name: { type: String, required: true },
         description: { type: String, required: true },
-        pricePerHour: { type: Number, required: true },
+        pricePerHour: { type: String, required: true },
         isAvailable: { type: Boolean, default: true },
         cc: { type: String, required: true },
         year: { type: String, required: true },
