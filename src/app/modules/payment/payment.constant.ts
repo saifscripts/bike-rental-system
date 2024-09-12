@@ -82,7 +82,7 @@ export const successPage = `<!doctype html>
             <h1 class="title">Payment Successful!</h1>
             <p>
                 Your payment has been processed successfully. Thank you for
-                booking.
+                rental.
             </p>
             <a href="{{dashboard-link}}" class="cta-button">Go to Dashboard</a>
         </div>

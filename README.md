@@ -19,7 +19,7 @@ Welcome to the backend of the Bike Rental Reservation System. With this applicat
 -   Role Based Access Control: Admin and User Roles with Different Permissions
 -   Retrieve and Update User's Own Profile
 -   Add, Update and Delete Bike by the Admin
--   Bike Availability and Booking Management
+-   Bike Availability and Rental Management
 -   Rental Transactions and Cost Calculation
 -   Error Handling and Input Validation
 
