@@ -31,13 +31,18 @@ const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     (0, sendResponse_1.default)(res, result);
 }));
 // Route: /api/rentals (GET)
-const getRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield rental_service_1.RentalServices.getRentalsFromDB(req.user.id, req.query);
+const getMyRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rental_service_1.RentalServices.getMyRentalsFromDB(req.user.id, req.query);
+    (0, sendResponse_1.default)(res, result);
+}));
+const getAllRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rental_service_1.RentalServices.getAllRentalsFromDB(req.query);
     (0, sendResponse_1.default)(res, result);
 }));
 exports.RentalControllers = {
     createRental,
     initiateRemainingPayment,
     returnBike,
-    getRentals,
+    getMyRentals,
+    getAllRentals,
 };

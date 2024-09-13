@@ -14,7 +14,10 @@ const router = express_1.default.Router();
 router
     .route('/')
     .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(rental_validation_1.RentalValidations.createRentalValidationSchema), rental_controller_1.RentalControllers.createRental)
-    .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), rental_controller_1.RentalControllers.getRentals);
+    .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), rental_controller_1.RentalControllers.getMyRentals);
+router
+    .route('/all')
+    .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), rental_controller_1.RentalControllers.getAllRentals);
 router
     .route('/:rentalId/return')
     .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), rental_controller_1.RentalControllers.returnBike);

@@ -14,7 +14,11 @@ router
         validateRequest(RentalValidations.createRentalValidationSchema),
         RentalControllers.createRental,
     )
-    .get(auth(USER_ROLE.ADMIN, USER_ROLE.USER), RentalControllers.getRentals);
+    .get(auth(USER_ROLE.ADMIN, USER_ROLE.USER), RentalControllers.getMyRentals);
+
+router
+    .route('/all')
+    .get(auth(USER_ROLE.ADMIN), RentalControllers.getAllRentals);
 
 router
     .route('/:rentalId/return')

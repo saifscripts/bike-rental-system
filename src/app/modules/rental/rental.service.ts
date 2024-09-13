@@ -224,7 +224,7 @@ const returnBikeIntoDB = async (
     }
 };
 
-const getRentalsFromDB = async (
+const getMyRentalsFromDB = async (
     userId: string,
     query: Record<string, unknown>,
 ) => {
@@ -257,9 +257,40 @@ const getRentalsFromDB = async (
     };
 };
 
+const getAllRentalsFromDB = async (query: Record<string, unknown>) => {
+    const rentalQuery = new QueryBuilder(
+        Rental.find().populate('bikeId'),
+        query,
+    )
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const rentals = await rentalQuery.modelQuery;
+    const meta = await rentalQuery.countTotal();
+
+    // check if retrieved data is empty
+    if (!rentals.length) {
+        return {
+            statusCode: httpStatus.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
+    }
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Rentals retrieved successfully',
+        data: rentals,
+        meta,
+    };
+};
+
 export const RentalServices = {
     createRentalIntoDB,
     initiateRemainingPayment,
     returnBikeIntoDB,
-    getRentalsFromDB,
+    getMyRentalsFromDB,
+    getAllRentalsFromDB,
 };

@@ -25,11 +25,16 @@ const returnBike = catchAsync(async (req, res) => {
 });
 
 // Route: /api/rentals (GET)
-const getRentals = catchAsync(async (req, res) => {
-    const result = await RentalServices.getRentalsFromDB(
+const getMyRentals = catchAsync(async (req, res) => {
+    const result = await RentalServices.getMyRentalsFromDB(
         req.user.id,
         req.query,
     );
+    sendResponse(res, result);
+});
+
+const getAllRentals = catchAsync(async (req, res) => {
+    const result = await RentalServices.getAllRentalsFromDB(req.query);
     sendResponse(res, result);
 });
 
@@ -37,5 +42,6 @@ export const RentalControllers = {
     createRental,
     initiateRemainingPayment,
     returnBike,
-    getRentals,
+    getMyRentals,
+    getAllRentals,
 };

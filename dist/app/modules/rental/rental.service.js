@@ -160,8 +160,31 @@ const returnBikeIntoDB = (rentalId, payload) => __awaiter(void 0, void 0, void 0
         throw error;
     }
 });
-const getRentalsFromDB = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
+const getMyRentalsFromDB = (userId, query) => __awaiter(void 0, void 0, void 0, function* () {
     const rentalQuery = new QueryBuilder_1.default(rental_model_1.Rental.find({ userId }).populate('bikeId'), query)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const rentals = yield rentalQuery.modelQuery;
+    const meta = yield rentalQuery.countTotal();
+    // check if retrieved data is empty
+    if (!rentals.length) {
+        return {
+            statusCode: http_status_1.default.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
+    }
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Rentals retrieved successfully',
+        data: rentals,
+        meta,
+    };
+});
+const getAllRentalsFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const rentalQuery = new QueryBuilder_1.default(rental_model_1.Rental.find().populate('bikeId userId'), query)
         .filter()
         .sort()
         .paginate()
@@ -187,5 +210,6 @@ exports.RentalServices = {
     createRentalIntoDB,
     initiateRemainingPayment,
     returnBikeIntoDB,
-    getRentalsFromDB,
+    getMyRentalsFromDB,
+    getAllRentalsFromDB,
 };
