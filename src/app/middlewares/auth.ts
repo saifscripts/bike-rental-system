@@ -35,7 +35,7 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
             config.jwt_access_secret as string,
         ) as JwtPayload;
 
-        const { id, role } = decoded;
+        const { id } = decoded;
 
         // check if user exists from the decoded user id
         const user = await User.findById(id);
@@ -45,7 +45,7 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
         }
 
         // check if the decoded user is authorized
-        if (authorizedRoles && !authorizedRoles.includes(role)) {
+        if (authorizedRoles && !authorizedRoles.includes(user.role)) {
             throw new AppError(
                 httpStatus.UNAUTHORIZED,
                 'You are not authorized!',

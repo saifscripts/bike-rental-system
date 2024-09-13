@@ -8,7 +8,7 @@ const notFound = (_req, res) => {
     res.status(http_status_1.default.NOT_FOUND).json({
         success: false,
         statusCode: http_status_1.default.NOT_FOUND,
-        message: 'Not Found',
+        message: 'Route Not Found',
     });
 };
 exports.default = notFound;
