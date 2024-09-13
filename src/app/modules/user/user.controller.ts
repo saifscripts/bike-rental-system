@@ -2,6 +2,30 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
 
+// Route: /api/users/ (GET)
+const getUsers = catchAsync(async (req, res) => {
+    const result = await UserServices.getUsersFromDB(req.query);
+    sendResponse(res, result);
+});
+
+// Route: /api/users/:id (DELETE)
+const deleteUser = catchAsync(async (req, res) => {
+    const result = await UserServices.deleteUserFromDB(req.params.id);
+    sendResponse(res, result);
+});
+
+// Route: /api/users/:id/make-admin (PUT)
+const makeAdmin = catchAsync(async (req, res) => {
+    const result = await UserServices.makeAdminIntoDB(req.params.id);
+    sendResponse(res, result);
+});
+
+// Route: /api/users/:id/remove-admin (PUT)
+const removeAdmin = catchAsync(async (req, res) => {
+    const result = await UserServices.removeAdminFromDB(req.params.id);
+    sendResponse(res, result);
+});
+
 // Route: /api/users/me (GET)
 const getProfile = catchAsync(async (req, res) => {
     const { id } = req.user;
@@ -17,6 +41,10 @@ const updateProfile = catchAsync(async (req, res) => {
 });
 
 export const UserControllers = {
+    getUsers,
+    deleteUser,
+    makeAdmin,
+    removeAdmin,
     getProfile,
     updateProfile,
 };

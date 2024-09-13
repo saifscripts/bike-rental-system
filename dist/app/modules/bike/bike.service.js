@@ -36,14 +36,14 @@ const getBikesFromDB = (query) => __awaiter(void 0, void 0, void 0, function* ()
     // console.log(bikeQuery);
     const bikes = yield bikeQuery.modelQuery;
     const meta = yield bikeQuery.countTotal();
-    // // check if retrieved data is empty
-    // if (!bikes.length) {
-    //     return {
-    //         statusCode: httpStatus.NOT_FOUND,
-    //         message: 'No Data Found',
-    //         data: [],
-    //     };
-    // }
+    // check if retrieved data is empty
+    if (!bikes.length) {
+        return {
+            statusCode: http_status_1.default.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
+    }
     return {
         statusCode: http_status_1.default.OK,
         message: 'Bikes retrieved successfully',

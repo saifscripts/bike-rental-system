@@ -16,6 +16,26 @@ exports.UserControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_service_1 = require("./user.service");
+// Route: /api/users/ (GET)
+const getUsers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.getUsersFromDB(req.query);
+    (0, sendResponse_1.default)(res, result);
+}));
+// Route: /api/users/:id (DELETE)
+const deleteUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.deleteUserFromDB(req.params.id);
+    (0, sendResponse_1.default)(res, result);
+}));
+// Route: /api/users/:id/make-admin (PUT)
+const makeAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.makeAdminIntoDB(req.params.id);
+    (0, sendResponse_1.default)(res, result);
+}));
+// Route: /api/users/:id/remove-admin (PUT)
+const removeAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.removeAdminFromDB(req.params.id);
+    (0, sendResponse_1.default)(res, result);
+}));
 // Route: /api/users/me (GET)
 const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
@@ -29,6 +49,10 @@ const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     (0, sendResponse_1.default)(res, result);
 }));
 exports.UserControllers = {
+    getUsers,
+    deleteUser,
+    makeAdmin,
+    removeAdmin,
     getProfile,
     updateProfile,
 };

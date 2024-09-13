@@ -27,14 +27,14 @@ const getBikesFromDB = async (query: Record<string, unknown>) => {
     const bikes = await bikeQuery.modelQuery;
     const meta = await bikeQuery.countTotal();
 
-    // // check if retrieved data is empty
-    // if (!bikes.length) {
-    //     return {
-    //         statusCode: httpStatus.NOT_FOUND,
-    //         message: 'No Data Found',
-    //         data: [],
-    //     };
-    // }
+    // check if retrieved data is empty
+    if (!bikes.length) {
+        return {
+            statusCode: httpStatus.NOT_FOUND,
+            message: 'No Data Found',
+            data: [],
+        };
+    }
 
     return {
         statusCode: httpStatus.OK,

@@ -7,6 +7,17 @@ import { UserValidations } from './user.validation';
 
 const router = express.Router();
 
+router.route('/').get(auth(USER_ROLE.ADMIN), UserControllers.getUsers);
+router.route('/:id').delete(auth(USER_ROLE.ADMIN), UserControllers.deleteUser);
+
+router
+    .route('/:id/make-admin')
+    .put(auth(USER_ROLE.ADMIN), UserControllers.makeAdmin);
+
+router
+    .route('/:id/remove-admin')
+    .put(auth(USER_ROLE.ADMIN), UserControllers.removeAdmin);
+
 router
     .route('/me')
     .get(auth(USER_ROLE.ADMIN, USER_ROLE.USER), UserControllers.getProfile)
