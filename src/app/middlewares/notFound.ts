@@ -5,7 +5,7 @@ const notFound: RequestHandler = (_req, res) => {
     res.status(httpStatus.NOT_FOUND).json({
         success: false,
         statusCode: httpStatus.NOT_FOUND,
-        message: 'Not Found',
+        message: 'Route Not Found',
     });
 };
 
