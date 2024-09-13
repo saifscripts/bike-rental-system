@@ -259,7 +259,7 @@ const getMyRentalsFromDB = async (
 
 const getAllRentalsFromDB = async (query: Record<string, unknown>) => {
     const rentalQuery = new QueryBuilder(
-        Rental.find().populate('bikeId'),
+        Rental.find().populate('bikeId userId'),
         query,
     )
         .filter()
