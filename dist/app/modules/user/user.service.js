@@ -15,7 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const QueryBuilder_1 = __importDefault(require("../../builders/QueryBuilder"));
+const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const sendMail_1 = require("../../utils/sendMail");
 const user_constant_1 = require("./user.constant");
 const user_model_1 = require("./user.model");
 const getUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -96,6 +98,26 @@ const updateProfileIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, f
         data: updatedUser,
     };
 });
+const contactUsViaMail = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const emailBody = user_constant_1.CONTACT_FORM_MESSAGE.replace('{{name}}', payload.name)
+        .replace('{{email}}', payload.email)
+        .replace('{{phone}}', payload.phone)
+        .replace('{{message}}', payload.message);
+    const result = yield (0, sendMail_1.sendMail)({
+        from: payload.email,
+        to: config_1.default.mail_auth_user,
+        subject: payload.name,
+        html: emailBody,
+    });
+    if (!result.messageId) {
+        throw new AppError_1.default(http_status_1.default.SERVICE_UNAVAILABLE, 'Fail to send email!');
+    }
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Email sent successfully',
+        data: null,
+    };
+});
 exports.UserServices = {
     getUsersFromDB,
     deleteUserFromDB,
@@ -103,4 +125,5 @@ exports.UserServices = {
     removeAdminFromDB,
     getProfileFromDB,
     updateProfileIntoDB,
+    contactUsViaMail,
 };

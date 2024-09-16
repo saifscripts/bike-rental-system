@@ -14,4 +14,6 @@ export default {
     store_id: process.env.STORE_ID,
     signature_key: process.env.SIGNATURE_KEY,
     payment_base_url: process.env.PAYMENT_BASE_URL,
+    mail_auth_user: process.env.MAIL_AUTH_USER,
+    mail_auth_pass: process.env.MAIL_AUTH_PASS,
 };

@@ -48,6 +48,10 @@ const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     const result = yield user_service_1.UserServices.updateProfileIntoDB(id, req.body);
     (0, sendResponse_1.default)(res, result);
 }));
+const contactUs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.contactUsViaMail(req.body);
+    (0, sendResponse_1.default)(res, result);
+}));
 exports.UserControllers = {
     getUsers,
     deleteUser,
@@ -55,4 +59,5 @@ exports.UserControllers = {
     removeAdmin,
     getProfile,
     updateProfile,
+    contactUs,
 };

@@ -17,6 +17,13 @@ export interface ILoginCredentials {
     password: string;
 }
 
+export interface IContactUsOptions {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+}
+
 export interface UserModel extends Model<IUser> {
     comparePassword(plain: string, hashed: string): Promise<boolean>;
 }

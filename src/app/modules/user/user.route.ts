@@ -27,4 +27,11 @@ router
         UserControllers.updateProfile,
     );
 
+router
+    .route('/contact-us')
+    .post(
+        validateRequest(UserValidations.contactUsValidationSchema),
+        UserControllers.contactUs,
+    );
+
 export const UserRoutes = router;

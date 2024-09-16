@@ -40,6 +40,11 @@ const updateProfile = catchAsync(async (req, res) => {
     sendResponse(res, result);
 });
 
+const contactUs = catchAsync(async (req, res) => {
+    const result = await UserServices.contactUsViaMail(req.body);
+    sendResponse(res, result);
+});
+
 export const UserControllers = {
     getUsers,
     deleteUser,
@@ -47,4 +52,5 @@ export const UserControllers = {
     removeAdmin,
     getProfile,
     updateProfile,
+    contactUs,
 };

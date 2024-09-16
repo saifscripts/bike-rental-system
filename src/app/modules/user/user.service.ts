@@ -1,8 +1,10 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builders/QueryBuilder';
+import config from '../../config';
 import AppError from '../../errors/AppError';
-import { USER_ROLE } from './user.constant';
-import { IUser } from './user.interface';
+import { sendMail } from '../../utils/sendMail';
+import { CONTACT_FORM_MESSAGE, USER_ROLE } from './user.constant';
+import { IContactUsOptions, IUser } from './user.interface';
 import { User } from './user.model';
 
 const getUsersFromDB = async (query: Record<string, unknown>) => {
@@ -103,6 +105,33 @@ const updateProfileIntoDB = async (id: string, payload: Partial<IUser>) => {
     };
 };
 
+const contactUsViaMail = async (payload: IContactUsOptions) => {
+    const emailBody = CONTACT_FORM_MESSAGE.replace('{{name}}', payload.name)
+        .replace('{{email}}', payload.email)
+        .replace('{{phone}}', payload.phone)
+        .replace('{{message}}', payload.message);
+
+    const result = await sendMail({
+        from: payload.email,
+        to: config.mail_auth_user!,
+        subject: payload.name,
+        html: emailBody,
+    });
+
+    if (!result.messageId) {
+        throw new AppError(
+            httpStatus.SERVICE_UNAVAILABLE,
+            'Fail to send email!',
+        );
+    }
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Email sent successfully',
+        data: null,
+    };
+};
+
 export const UserServices = {
     getUsersFromDB,
     deleteUserFromDB,
@@ -110,4 +139,5 @@ export const UserServices = {
     removeAdminFromDB,
     getProfileFromDB,
     updateProfileIntoDB,
+    contactUsViaMail,
 };
