@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadSingle = void 0;
+exports.upload = exports.uploadSingle = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const multer_1 = __importDefault(require("multer"));
 const AppError_1 = __importDefault(require("../errors/AppError"));
@@ -24,13 +24,15 @@ const uploadSingle = (fieldName) => {
         const uploadMiddleware = upload.single(fieldName);
         uploadMiddleware(req, _res, (err) => {
             if (err) {
-                new AppError_1.default(http_status_1.default.BAD_REQUEST, 'File upload failed');
+                return next(new AppError_1.default(http_status_1.default.BAD_REQUEST, 'File upload failed'));
             }
             if (!req.file) {
-                new AppError_1.default(http_status_1.default.BAD_REQUEST, 'No file uploaded');
+                return next(new AppError_1.default(http_status_1.default.BAD_REQUEST, 'No file uploaded'));
             }
             next();
         });
     }));
 };
 exports.uploadSingle = uploadSingle;
+const storage = multer_1.default.memoryStorage();
+exports.upload = (0, multer_1.default)({ storage: storage });

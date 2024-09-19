@@ -11,6 +11,7 @@ const BikeSchema = new mongoose_1.Schema({
     year: { type: Number, required: true },
     model: { type: String, required: true },
     brand: { type: String, required: true },
+    imageURL: { type: String, required: true },
 }, {
     timestamps: true,
 });

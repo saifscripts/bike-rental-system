@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BikeRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const auth_1 = __importDefault(require("../../middlewares/auth"));
+const bodyParser_1 = require("../../middlewares/bodyParser");
+const upload_1 = require("../../middlewares/upload");
 const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
 const user_constant_1 = require("../user/user.constant");
 const bike_controller_1 = require("./bike.controller");
@@ -13,11 +15,11 @@ const bike_validation_1 = require("./bike.validation");
 const router = express_1.default.Router();
 router
     .route('/')
-    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(bike_validation_1.BikeValidations.createBikeValidationSchema), bike_controller_1.BikeControllers.createBike)
+    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, upload_1.uploadSingle)('image'), bodyParser_1.bodyParser, (0, validateRequest_1.default)(bike_validation_1.BikeValidations.createBikeValidationSchema), bike_controller_1.BikeControllers.createBike)
     .get(bike_controller_1.BikeControllers.getBikes);
 router
     .route('/:id')
-    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(bike_validation_1.BikeValidations.updateBikeValidationSchema), bike_controller_1.BikeControllers.updateBike)
+    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), upload_1.upload.single('image'), bodyParser_1.bodyParser, (0, validateRequest_1.default)(bike_validation_1.BikeValidations.updateBikeValidationSchema), bike_controller_1.BikeControllers.updateBike)
     .get(bike_controller_1.BikeControllers.getSingleBike)
     .delete((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), bike_controller_1.BikeControllers.deleteBike);
 exports.BikeRoutes = router;

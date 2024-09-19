@@ -4,7 +4,10 @@ import { BikeServices } from './bike.service';
 
 // Route: /api/bikes (POST)
 const createBike = catchAsync(async (req, res) => {
-    const result = await BikeServices.createBikeIntoDB(req.body);
+    const result = await BikeServices.createBikeIntoDB(
+        req.body,
+        req.file?.buffer as Buffer,
+    );
     sendResponse(res, result);
 });
 
@@ -23,7 +26,7 @@ const getSingleBike = catchAsync(async (req, res) => {
 // Route: /api/bikes/:id (PUT)
 const updateBike = catchAsync(async (req, res) => {
     const { id } = req.params;
-    const result = await BikeServices.updateBikeIntoDB(id, req.body);
+    const result = await BikeServices.updateBikeIntoDB(id, req.body, req?.file);
     sendResponse(res, result);
 });
 

@@ -7,4 +7,5 @@ export interface IBike {
     year: number;
     model: string;
     brand: string;
+    imageURL: string;
 }

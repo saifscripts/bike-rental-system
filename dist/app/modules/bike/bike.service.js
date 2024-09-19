@@ -14,12 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BikeServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const QueryBuilder_1 = __importDefault(require("../../builders/QueryBuilder"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const uploadImage_1 = __importDefault(require("../../utils/uploadImage"));
 const bike_constant_1 = require("./bike.constant");
 const bike_model_1 = require("./bike.model");
-const createBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const newBike = yield bike_model_1.Bike.create(payload);
+const createBikeIntoDB = (payload, image) => __awaiter(void 0, void 0, void 0, function* () {
+    const _id = new mongoose_1.default.Types.ObjectId();
+    const imageURL = yield (0, uploadImage_1.default)(image, _id.toString(), 'bike');
+    const newBike = yield bike_model_1.Bike.create(Object.assign(Object.assign({}, payload), { _id, imageURL }));
     return {
         statusCode: http_status_1.default.CREATED,
         message: 'Bike added successfully',
@@ -63,7 +67,11 @@ const getSingleBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
         data: bike,
     };
 });
-const updateBikeIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateBikeIntoDB = (id, payload, file) => __awaiter(void 0, void 0, void 0, function* () {
+    if (file) {
+        const imageURL = (yield (0, uploadImage_1.default)(file.buffer, id, 'bike'));
+        payload.imageURL = imageURL;
+    }
     const isBikeExists = yield bike_model_1.Bike.findById(id);
     // check if the bike exist
     if (!isBikeExists) {

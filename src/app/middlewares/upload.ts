@@ -13,14 +13,21 @@ export const uploadSingle = (fieldName: string): RequestHandler => {
 
         uploadMiddleware(req, _res, (err) => {
             if (err) {
-                new AppError(httpStatus.BAD_REQUEST, 'File upload failed');
+                return next(
+                    new AppError(httpStatus.BAD_REQUEST, 'File upload failed'),
+                );
             }
 
             if (!req.file) {
-                new AppError(httpStatus.BAD_REQUEST, 'No file uploaded');
+                return next(
+                    new AppError(httpStatus.BAD_REQUEST, 'No file uploaded'),
+                );
             }
 
             next();
         });
     });
 };
+
+const storage = multer.memoryStorage();
+export const upload = multer({ storage: storage });

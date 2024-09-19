@@ -18,7 +18,8 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
 // Route: /api/bikes (POST)
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body);
+    var _a;
+    const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body, (_a = req.file) === null || _a === void 0 ? void 0 : _a.buffer);
     (0, sendResponse_1.default)(res, result);
 }));
 // Route: /api/bikes (GET)
@@ -34,7 +35,7 @@ const getSingleBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 // Route: /api/bikes/:id (PUT)
 const updateBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const result = yield bike_service_1.BikeServices.updateBikeIntoDB(id, req.body);
+    const result = yield bike_service_1.BikeServices.updateBikeIntoDB(id, req.body, req === null || req === void 0 ? void 0 : req.file);
     (0, sendResponse_1.default)(res, result);
 }));
 // Route: /api/bikes/:id (DELETE)

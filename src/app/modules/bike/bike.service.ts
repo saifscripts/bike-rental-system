@@ -1,12 +1,18 @@
 import httpStatus from 'http-status';
+import mongoose from 'mongoose';
 import QueryBuilder from '../../builders/QueryBuilder';
 import AppError from '../../errors/AppError';
+import uploadImage from '../../utils/uploadImage';
 import { BikeSearchableFields } from './bike.constant';
 import { IBike } from './bike.interface';
 import { Bike } from './bike.model';
 
-const createBikeIntoDB = async (payload: IBike) => {
-    const newBike = await Bike.create(payload);
+const createBikeIntoDB = async (payload: IBike, image: Buffer) => {
+    const _id = new mongoose.Types.ObjectId();
+
+    const imageURL = await uploadImage(image, _id.toString(), 'bike');
+
+    const newBike = await Bike.create({ ...payload, _id, imageURL });
 
     return {
         statusCode: httpStatus.CREATED,
@@ -59,7 +65,15 @@ const getSingleBikeFromDB = async (id: string) => {
     };
 };
 
-const updateBikeIntoDB = async (id: string, payload: Partial<IBike>) => {
+const updateBikeIntoDB = async (
+    id: string,
+    payload: Partial<IBike>,
+    file?: { buffer: Buffer },
+) => {
+    if (file) {
+        const imageURL = (await uploadImage(file.buffer, id, 'bike')) as string;
+        payload.imageURL = imageURL;
+    }
     const isBikeExists = await Bike.findById(id);
 
     // check if the bike exist
