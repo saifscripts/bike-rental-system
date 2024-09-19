@@ -1,7 +1,7 @@
 import express from 'express';
 import auth from '../../middlewares/auth';
+import { uploadSingle } from '../../middlewares/upload';
 import validateRequest from '../../middlewares/validateRequest';
-import { upload } from '../../utils/multer';
 import { USER_ROLE } from './user.constant';
 import { UserControllers } from './user.controller';
 import { UserValidations } from './user.validation';
@@ -32,7 +32,7 @@ router
     .route('/avatar')
     .post(
         auth(USER_ROLE.ADMIN, USER_ROLE.USER),
-        upload.single('avatar'),
+        uploadSingle('avatar'),
         UserControllers.updateAvatar,
     );
 
