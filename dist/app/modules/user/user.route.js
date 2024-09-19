@@ -5,14 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRoutes = void 0;
 const express_1 = __importDefault(require("express"));
-const multer_1 = __importDefault(require("multer"));
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
+const multer_1 = require("../../utils/multer");
 const user_constant_1 = require("./user.constant");
 const user_controller_1 = require("./user.controller");
 const user_validation_1 = require("./user.validation");
-const storage = multer_1.default.memoryStorage(); // store image in memory
-const upload = (0, multer_1.default)({ storage: storage });
 const router = express_1.default.Router();
 router.route('/').get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), user_controller_1.UserControllers.getUsers);
 router.route('/:id').delete((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), user_controller_1.UserControllers.deleteUser);
@@ -28,7 +26,7 @@ router
     .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(user_validation_1.UserValidations.updateProfileValidationSchema), user_controller_1.UserControllers.updateProfile);
 router
     .route('/avatar')
-    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), upload.single('avatar'), user_controller_1.UserControllers.updateAvatar);
+    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), multer_1.upload.single('avatar'), user_controller_1.UserControllers.updateAvatar);
 router
     .route('/contact-us')
     .post((0, validateRequest_1.default)(user_validation_1.UserValidations.contactUsValidationSchema), user_controller_1.UserControllers.contactUs);

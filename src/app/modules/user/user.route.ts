@@ -1,13 +1,10 @@
 import express from 'express';
-import multer from 'multer';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
+import { upload } from '../../utils/multer';
 import { USER_ROLE } from './user.constant';
 import { UserControllers } from './user.controller';
 import { UserValidations } from './user.validation';
-
-const storage = multer.memoryStorage(); // store image in memory
-const upload = multer({ storage: storage });
 
 const router = express.Router();
 
