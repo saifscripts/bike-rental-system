@@ -15,7 +15,7 @@ const bike_validation_1 = require("./bike.validation");
 const router = express_1.default.Router();
 router
     .route('/')
-    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, upload_1.uploadSingle)('image'), bodyParser_1.bodyParser, (0, validateRequest_1.default)(bike_validation_1.BikeValidations.createBikeValidationSchema), bike_controller_1.BikeControllers.createBike)
+    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), upload_1.upload.single('image'), bodyParser_1.bodyParser, (0, validateRequest_1.default)(bike_validation_1.BikeValidations.createBikeValidationSchema), bike_controller_1.BikeControllers.createBike)
     .get(bike_controller_1.BikeControllers.getBikes);
 router
     .route('/:id')

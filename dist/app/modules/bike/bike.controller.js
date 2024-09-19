@@ -18,8 +18,7 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
 // Route: /api/bikes (POST)
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body, (_a = req.file) === null || _a === void 0 ? void 0 : _a.buffer);
+    const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body, req.file);
     (0, sendResponse_1.default)(res, result);
 }));
 // Route: /api/bikes (GET)

@@ -21,8 +21,11 @@ const uploadImage_1 = __importDefault(require("../../utils/uploadImage"));
 const bike_constant_1 = require("./bike.constant");
 const bike_model_1 = require("./bike.model");
 const createBikeIntoDB = (payload, image) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!image) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Image is required');
+    }
     const _id = new mongoose_1.default.Types.ObjectId();
-    const imageURL = yield (0, uploadImage_1.default)(image, _id.toString(), 'bike');
+    const imageURL = yield (0, uploadImage_1.default)(image.buffer, _id.toString(), 'bike');
     const newBike = yield bike_model_1.Bike.create(Object.assign(Object.assign({}, payload), { _id, imageURL }));
     return {
         statusCode: http_status_1.default.CREATED,
@@ -67,9 +70,9 @@ const getSingleBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
         data: bike,
     };
 });
-const updateBikeIntoDB = (id, payload, file) => __awaiter(void 0, void 0, void 0, function* () {
-    if (file) {
-        const imageURL = (yield (0, uploadImage_1.default)(file.buffer, id, 'bike'));
+const updateBikeIntoDB = (id, payload, image) => __awaiter(void 0, void 0, void 0, function* () {
+    if (image) {
+        const imageURL = (yield (0, uploadImage_1.default)(image.buffer, id, 'bike'));
         payload.imageURL = imageURL;
     }
     const isBikeExists = yield bike_model_1.Bike.findById(id);

@@ -7,10 +7,14 @@ import { BikeSearchableFields } from './bike.constant';
 import { IBike } from './bike.interface';
 import { Bike } from './bike.model';
 
-const createBikeIntoDB = async (payload: IBike, image: Buffer) => {
+const createBikeIntoDB = async (payload: IBike, image: { buffer: Buffer }) => {
+    if (!image) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Image is required');
+    }
+
     const _id = new mongoose.Types.ObjectId();
 
-    const imageURL = await uploadImage(image, _id.toString(), 'bike');
+    const imageURL = await uploadImage(image.buffer, _id.toString(), 'bike');
 
     const newBike = await Bike.create({ ...payload, _id, imageURL });
 
@@ -68,10 +72,14 @@ const getSingleBikeFromDB = async (id: string) => {
 const updateBikeIntoDB = async (
     id: string,
     payload: Partial<IBike>,
-    file?: { buffer: Buffer },
+    image?: { buffer: Buffer },
 ) => {
-    if (file) {
-        const imageURL = (await uploadImage(file.buffer, id, 'bike')) as string;
+    if (image) {
+        const imageURL = (await uploadImage(
+            image.buffer,
+            id,
+            'bike',
+        )) as string;
         payload.imageURL = imageURL;
     }
     const isBikeExists = await Bike.findById(id);
