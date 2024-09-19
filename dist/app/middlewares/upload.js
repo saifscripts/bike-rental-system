@@ -21,12 +21,16 @@ const uploadSingle = (fieldName) => {
     return (0, catchAsync_1.default)((req, _res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const storage = multer_1.default.memoryStorage();
         const upload = (0, multer_1.default)({ storage: storage });
-        upload.single(fieldName);
-        const file = req.file;
-        if (!file) {
-            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'No file uploaded');
-        }
-        next();
+        const uploadMiddleware = upload.single(fieldName);
+        uploadMiddleware(req, _res, (err) => {
+            if (err) {
+                new AppError_1.default(http_status_1.default.BAD_REQUEST, 'File upload failed');
+            }
+            if (!req.file) {
+                new AppError_1.default(http_status_1.default.BAD_REQUEST, 'No file uploaded');
+            }
+            next();
+        });
     }));
 };
 exports.uploadSingle = uploadSingle;
