@@ -11,7 +11,8 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const user_constant_1 = require("./user.constant");
 const user_controller_1 = require("./user.controller");
 const user_validation_1 = require("./user.validation");
-const upload = (0, multer_1.default)({ dest: 'uploads/' });
+const storage = multer_1.default.memoryStorage(); // store image in memory
+const upload = (0, multer_1.default)({ storage: storage });
 const router = express_1.default.Router();
 router.route('/').get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), user_controller_1.UserControllers.getUsers);
 router.route('/:id').delete((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), user_controller_1.UserControllers.deleteUser);

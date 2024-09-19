@@ -13,23 +13,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const cloudinary_1 = require("cloudinary");
-const fs_1 = __importDefault(require("fs"));
-const util_1 = require("util");
+const streamifier_1 = __importDefault(require("streamifier"));
 const config_1 = __importDefault(require("../config"));
-const unlink = (0, util_1.promisify)(fs_1.default.unlink);
 cloudinary_1.v2.config({
     cloud_name: config_1.default.cloudinary_name,
     api_key: config_1.default.cloudinary_api_key,
     api_secret: config_1.default.cloudinary_api_secret,
 });
-function uploadImage(filepath, publicId, folder) {
+function uploadImage(buffer, publicId, folder) {
     return __awaiter(this, void 0, void 0, function* () {
-        const uploadResult = yield cloudinary_1.v2.uploader.upload(filepath, {
-            public_id: publicId,
-            folder: folder,
+        return new Promise((resolve, reject) => {
+            const cld_upload_stream = cloudinary_1.v2.uploader.upload_stream({
+                folder: folder,
+                public_id: publicId,
+            }, function (error, result) {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result === null || result === void 0 ? void 0 : result.secure_url);
+            });
+            streamifier_1.default.createReadStream(buffer).pipe(cld_upload_stream);
         });
-        yield unlink(filepath);
-        return uploadResult;
     });
 }
 exports.default = uploadImage;

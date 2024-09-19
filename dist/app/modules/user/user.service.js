@@ -119,11 +119,14 @@ const contactUsViaMail = (payload) => __awaiter(void 0, void 0, void 0, function
         data: null,
     };
 });
-const updateAvatar = (id, filepath) => __awaiter(void 0, void 0, void 0, function* () {
-    const { secure_url } = yield (0, uploadImage_1.default)(filepath, id, 'avatar');
-    const updatedUser = yield user_model_1.User.findByIdAndUpdate(id, { avatarURL: secure_url }, {
+const updateAvatar = (id, buffer) => __awaiter(void 0, void 0, void 0, function* () {
+    const avatarURL = yield (0, uploadImage_1.default)(buffer, id, 'avatar');
+    const updatedUser = yield user_model_1.User.findByIdAndUpdate(id, { avatarURL }, {
         new: true,
     });
+    if (!updatedUser) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+    }
     return {
         statusCode: http_status_1.default.OK,
         message: 'Profile updated successfully',

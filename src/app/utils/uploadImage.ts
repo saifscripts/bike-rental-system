@@ -1,9 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs';
-import { promisify } from 'util';
+import streamifier from 'streamifier';
 import config from '../config';
-
-const unlink = promisify(fs.unlink);
 
 cloudinary.config({
     cloud_name: config.cloudinary_name,
@@ -12,16 +9,24 @@ cloudinary.config({
 });
 
 export default async function uploadImage(
-    filepath: string,
+    buffer: Buffer,
     publicId: string,
     folder?: string,
 ) {
-    const uploadResult = await cloudinary.uploader.upload(filepath, {
-        public_id: publicId,
-        folder: folder,
+    return new Promise((resolve, reject) => {
+        const cld_upload_stream = cloudinary.uploader.upload_stream(
+            {
+                folder: folder,
+                public_id: publicId,
+            },
+            function (error, result) {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result?.secure_url);
+            },
+        );
+
+        streamifier.createReadStream(buffer).pipe(cld_upload_stream);
     });
-
-    await unlink(filepath);
-
-    return uploadResult;
 }

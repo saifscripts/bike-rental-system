@@ -48,7 +48,7 @@ const contactUs = catchAsync(async (req, res) => {
 const updateAvatar = catchAsync(async (req, res) => {
     const result = await UserServices.updateAvatar(
         req.user.id,
-        req.file?.path as string,
+        req.file?.buffer as Buffer,
     );
     sendResponse(res, result);
 });

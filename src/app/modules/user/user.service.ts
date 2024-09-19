@@ -133,16 +133,20 @@ const contactUsViaMail = async (payload: IContactUsOptions) => {
     };
 };
 
-const updateAvatar = async (id: string, filepath: string) => {
-    const { secure_url } = await uploadImage(filepath, id, 'avatar');
+const updateAvatar = async (id: string, buffer: Buffer) => {
+    const avatarURL = await uploadImage(buffer, id, 'avatar');
 
     const updatedUser = await User.findByIdAndUpdate(
         id,
-        { avatarURL: secure_url },
+        { avatarURL },
         {
             new: true,
         },
     );
+
+    if (!updatedUser) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
 
     return {
         statusCode: httpStatus.OK,
