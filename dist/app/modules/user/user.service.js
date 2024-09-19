@@ -119,8 +119,11 @@ const contactUsViaMail = (payload) => __awaiter(void 0, void 0, void 0, function
         data: null,
     };
 });
-const updateAvatar = (id, buffer) => __awaiter(void 0, void 0, void 0, function* () {
-    const avatarURL = yield (0, uploadImage_1.default)(buffer, id, 'avatar');
+const updateAvatar = (id, image) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!image) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Avatar is required');
+    }
+    const avatarURL = yield (0, uploadImage_1.default)(image.buffer, id, 'avatar');
     const updatedUser = yield user_model_1.User.findByIdAndUpdate(id, { avatarURL }, {
         new: true,
     });

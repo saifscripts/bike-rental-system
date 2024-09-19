@@ -26,7 +26,7 @@ router
     .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(user_validation_1.UserValidations.updateProfileValidationSchema), user_controller_1.UserControllers.updateProfile);
 router
     .route('/avatar')
-    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), (0, upload_1.uploadSingle)('avatar'), user_controller_1.UserControllers.updateAvatar);
+    .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), upload_1.upload.single('avatar'), user_controller_1.UserControllers.updateAvatar);
 router
     .route('/contact-us')
     .post((0, validateRequest_1.default)(user_validation_1.UserValidations.contactUsValidationSchema), user_controller_1.UserControllers.contactUs);

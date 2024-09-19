@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '../../middlewares/auth';
-import { uploadSingle } from '../../middlewares/upload';
+import { upload } from '../../middlewares/upload';
 import validateRequest from '../../middlewares/validateRequest';
 import { USER_ROLE } from './user.constant';
 import { UserControllers } from './user.controller';
@@ -32,7 +32,7 @@ router
     .route('/avatar')
     .post(
         auth(USER_ROLE.ADMIN, USER_ROLE.USER),
-        uploadSingle('avatar'),
+        upload.single('avatar'),
         UserControllers.updateAvatar,
     );
 

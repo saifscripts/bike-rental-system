@@ -133,8 +133,12 @@ const contactUsViaMail = async (payload: IContactUsOptions) => {
     };
 };
 
-const updateAvatar = async (id: string, buffer: Buffer) => {
-    const avatarURL = await uploadImage(buffer, id, 'avatar');
+const updateAvatar = async (id: string, image: { buffer: Buffer }) => {
+    if (!image) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Avatar is required');
+    }
+
+    const avatarURL = await uploadImage(image.buffer, id, 'avatar');
 
     const updatedUser = await User.findByIdAndUpdate(
         id,

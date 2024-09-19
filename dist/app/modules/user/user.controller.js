@@ -53,8 +53,7 @@ const contactUs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     (0, sendResponse_1.default)(res, result);
 }));
 const updateAvatar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const result = yield user_service_1.UserServices.updateAvatar(req.user.id, (_a = req.file) === null || _a === void 0 ? void 0 : _a.buffer);
+    const result = yield user_service_1.UserServices.updateAvatar(req.user.id, req.file);
     (0, sendResponse_1.default)(res, result);
 }));
 exports.UserControllers = {
