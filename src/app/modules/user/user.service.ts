@@ -3,6 +3,7 @@ import QueryBuilder from '../../builders/QueryBuilder';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { sendMail } from '../../utils/sendMail';
+import uploadImage from '../../utils/uploadImage';
 import { CONTACT_FORM_MESSAGE, USER_ROLE } from './user.constant';
 import { IContactUsOptions, IUser } from './user.interface';
 import { User } from './user.model';
@@ -132,6 +133,24 @@ const contactUsViaMail = async (payload: IContactUsOptions) => {
     };
 };
 
+const updateAvatar = async (id: string, filepath: string) => {
+    const { secure_url } = await uploadImage(filepath, id, 'avatar');
+
+    const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { avatarURL: secure_url },
+        {
+            new: true,
+        },
+    );
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Profile updated successfully',
+        data: updatedUser,
+    };
+};
+
 export const UserServices = {
     getUsersFromDB,
     deleteUserFromDB,
@@ -140,4 +159,5 @@ export const UserServices = {
     getProfileFromDB,
     updateProfileIntoDB,
     contactUsViaMail,
+    updateAvatar,
 };

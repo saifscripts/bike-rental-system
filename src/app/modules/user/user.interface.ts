@@ -9,6 +9,7 @@ export interface IUser {
     password?: string;
     phone: string;
     address: string;
+    avatarURL?: string;
     role: IUserRole;
 }
 

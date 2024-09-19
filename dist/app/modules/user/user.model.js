@@ -23,6 +23,7 @@ const UserSchema = new mongoose_1.Schema({
     password: { type: String, required: true, select: false },
     phone: { type: String, required: true },
     address: { type: String, required: true },
+    avatarURL: { type: String, required: false },
     role: {
         type: String,
         required: true,

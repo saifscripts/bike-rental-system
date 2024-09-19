@@ -16,4 +16,7 @@ export default {
     payment_base_url: process.env.PAYMENT_BASE_URL,
     mail_auth_user: process.env.MAIL_AUTH_USER,
     mail_auth_pass: process.env.MAIL_AUTH_PASS,
+    cloudinary_name: process.env.CLOUDINARY_NAME,
+    cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
+    cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
 };

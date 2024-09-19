@@ -18,6 +18,7 @@ const QueryBuilder_1 = __importDefault(require("../../builders/QueryBuilder"));
 const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const sendMail_1 = require("../../utils/sendMail");
+const uploadImage_1 = __importDefault(require("../../utils/uploadImage"));
 const user_constant_1 = require("./user.constant");
 const user_model_1 = require("./user.model");
 const getUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -118,6 +119,17 @@ const contactUsViaMail = (payload) => __awaiter(void 0, void 0, void 0, function
         data: null,
     };
 });
+const updateAvatar = (id, filepath) => __awaiter(void 0, void 0, void 0, function* () {
+    const { secure_url } = yield (0, uploadImage_1.default)(filepath, id, 'avatar');
+    const updatedUser = yield user_model_1.User.findByIdAndUpdate(id, { avatarURL: secure_url }, {
+        new: true,
+    });
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Profile updated successfully',
+        data: updatedUser,
+    };
+});
 exports.UserServices = {
     getUsersFromDB,
     deleteUserFromDB,
@@ -126,4 +138,5 @@ exports.UserServices = {
     getProfileFromDB,
     updateProfileIntoDB,
     contactUsViaMail,
+    updateAvatar,
 };

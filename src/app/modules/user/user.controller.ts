@@ -45,6 +45,14 @@ const contactUs = catchAsync(async (req, res) => {
     sendResponse(res, result);
 });
 
+const updateAvatar = catchAsync(async (req, res) => {
+    const result = await UserServices.updateAvatar(
+        req.user.id,
+        req.file?.path as string,
+    );
+    sendResponse(res, result);
+});
+
 export const UserControllers = {
     getUsers,
     deleteUser,
@@ -53,4 +61,5 @@ export const UserControllers = {
     getProfile,
     updateProfile,
     contactUs,
+    updateAvatar,
 };
