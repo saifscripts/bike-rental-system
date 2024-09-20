@@ -17,12 +17,12 @@ const config_1 = __importDefault(require("../../config"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
-// Route: /api/auth/signup (POST)
+// Route: /api/v1/auth/signup (POST)
 const signup = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.signup(req.body);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/auth/login (POST)
+// Route: /api/v1/auth/login (POST)
 const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.login(req.body);
     res.cookie('refreshToken', result.refreshToken, {
@@ -31,11 +31,13 @@ const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, 
     });
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/v1/auth/refresh-token (POST)
 const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { refreshToken } = req.cookies;
     const result = yield auth_service_1.AuthServices.refreshToken(refreshToken);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/v1/auth/change-password (PUT)
 const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.changePassword(req.user, req.body);
     (0, sendResponse_1.default)(res, result);
