@@ -26,7 +26,7 @@ const contactUsValidationSchema = z.object({
         email: z
             .string({ required_error: 'You must provide your email!' })
             .email({ message: 'Invalid email!' }),
-        phone: z
+        phone: z            
             .string({ required_error: 'You must provide your phone number!' })
             .refine((value) => validator.isMobilePhone(value, 'bn-BD'), {
                 message: 'Invalid Bangladeshi phone number',
