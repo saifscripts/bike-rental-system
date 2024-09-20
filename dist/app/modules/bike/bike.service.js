@@ -86,18 +86,25 @@ const updateBikeIntoDB = (id, payload, image) => __awaiter(void 0, void 0, void 
     });
     return {
         statusCode: http_status_1.default.OK,
-        message: 'Bike updated successfully',
+        message: 'Bike updated successfully!',
         data: updatedBike,
     };
 });
 const deleteBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const isBikeExists = yield bike_model_1.Bike.findById(id);
+    const bike = yield bike_model_1.Bike.findById(id);
     // check if the bike exists
-    if (!isBikeExists) {
+    if (!bike) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
     }
+    // check if the bike is not available
+    if (!bike.isAvailable) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Can't delete a bike that is currently being rented!");
+    }
     // delete the bike
-    const deletedBike = yield bike_model_1.Bike.findByIdAndDelete(id);
+    const deletedBike = yield bike_model_1.Bike.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    if (!deletedBike) {
+        throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to delete bike');
+    }
     return {
         statusCode: http_status_1.default.OK,
         message: 'Bike deleted successfully',

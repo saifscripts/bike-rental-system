@@ -96,21 +96,40 @@ const updateBikeIntoDB = async (
 
     return {
         statusCode: httpStatus.OK,
-        message: 'Bike updated successfully',
+        message: 'Bike updated successfully!',
         data: updatedBike,
     };
 };
 
 const deleteBikeFromDB = async (id: string) => {
-    const isBikeExists = await Bike.findById(id);
+    const bike = await Bike.findById(id);
 
     // check if the bike exists
-    if (!isBikeExists) {
+    if (!bike) {
         throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
     }
 
+    // check if the bike is not available
+    if (!bike.isAvailable) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            "Can't delete a bike that is currently being rented!",
+        );
+    }
+
     // delete the bike
-    const deletedBike = await Bike.findByIdAndDelete(id);
+    const deletedBike = await Bike.findByIdAndUpdate(
+        id,
+        { isDeleted: true },
+        { new: true },
+    );
+
+    if (!deletedBike) {
+        throw new AppError(
+            httpStatus.INTERNAL_SERVER_ERROR,
+            'Failed to delete bike',
+        );
+    }
 
     return {
         statusCode: httpStatus.OK,

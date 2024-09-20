@@ -8,4 +8,5 @@ export interface IBike {
     model: string;
     brand: string;
     imageURL: string;
+    isDeleted: boolean;
 }
