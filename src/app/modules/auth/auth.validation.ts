@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { z } from 'zod';
 
 const signupValidationSchema = z.object({
@@ -17,9 +18,13 @@ const signupValidationSchema = z.object({
                 required_error: 'Password is required',
             })
             .min(6, 'Password must be at least 6 characters long'),
-        phone: z.string({
-            required_error: 'Phone number is required',
-        }),
+        phone: z
+            .string({
+                required_error: 'Phone number is required',
+            })
+            .refine((value) => validator.isMobilePhone(value, 'bn-BD'), {
+                message: 'Invalid Bangladeshi phone number',
+            }),
         address: z
             .string({
                 required_error: 'Address is required',

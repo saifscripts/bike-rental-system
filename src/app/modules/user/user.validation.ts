@@ -1,10 +1,16 @@
+import validator from 'validator';
 import { z } from 'zod';
 
 const updateProfileValidationSchema = z.object({
     body: z.object({
         name: z.string().min(1, 'Name cannot be an empty string').optional(),
         email: z.string().email('Invalid email address').optional(),
-        phone: z.string().optional(),
+        phone: z
+            .string()
+            .refine((value) => validator.isMobilePhone(value, 'bn-BD'), {
+                message: 'Invalid Bangladeshi phone number',
+            })
+            .optional(),
         address: z
             .string()
             .min(1, 'Address cannot be an empty string')
@@ -22,7 +28,9 @@ const contactUsValidationSchema = z.object({
             .email({ message: 'Invalid email!' }),
         phone: z
             .string({ required_error: 'You must provide your phone number!' })
-            .min(1, { message: 'You must provide your phone number!' }),
+            .refine((value) => validator.isMobilePhone(value, 'bn-BD'), {
+                message: 'Invalid Bangladeshi phone number',
+            }),
         message: z
             .string({ required_error: "Message can't be empty!" })
             .min(1, { message: "Message can't be empty!" })
