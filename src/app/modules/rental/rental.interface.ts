@@ -12,4 +12,5 @@ export interface IRental {
     paidAmount: number;
     rentalStatus: keyof typeof RENTAL_STATUS;
     paymentStatus: keyof typeof PAYMENT_STATUS;
+    isDeleted: boolean;
 }

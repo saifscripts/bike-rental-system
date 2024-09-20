@@ -18,6 +18,7 @@ const UserSchema = new Schema<IUser, UserModel>(
             enum: UserRoles,
             default: 'USER',
         },
+        isDeleted: { type: Boolean, default: false },
     },
     {
         timestamps: true,
@@ -43,5 +44,25 @@ UserSchema.statics.comparePassword = async function (
 ) {
     return await bcrypt.compare(plain, hashed);
 };
+
+// Query Middleware
+UserSchema.pre('find', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+
+UserSchema.pre('findOne', function (next) {
+    if (this.getOptions().getDeletedDocs) {
+        return next();
+    }
+
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+
+UserSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+    next();
+});
 
 export const User = model<IUser, UserModel>('User', UserSchema);

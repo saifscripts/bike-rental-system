@@ -19,6 +19,8 @@ const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const sendMail_1 = require("../../utils/sendMail");
 const uploadImage_1 = __importDefault(require("../../utils/uploadImage"));
+const rental_constant_1 = require("../rental/rental.constant");
+const rental_model_1 = require("../rental/rental.model");
 const user_constant_1 = require("./user.constant");
 const user_model_1 = require("./user.model");
 const getUsersFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,11 +52,28 @@ const deleteUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
-    const result = yield user_model_1.User.deleteOne({ _id: id });
+    // check if the user has an ongoing rental or unpaid rental
+    const ongoingRental = yield rental_model_1.Rental.findOne({
+        userId: id,
+        $or: [
+            { rentalStatus: rental_constant_1.RENTAL_STATUS.ONGOING },
+            {
+                rentalStatus: rental_constant_1.RENTAL_STATUS.RETURNED,
+                paymentStatus: rental_constant_1.PAYMENT_STATUS.UNPAID,
+            },
+        ],
+    });
+    if (ongoingRental) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Can't delete user who has an ongoing rental or unpaid rental!");
+    }
+    const deletedUser = yield user_model_1.User.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    if (!deletedUser) {
+        throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to delete user!');
+    }
     return {
         statusCode: http_status_1.default.OK,
         message: 'User deleted successfully',
-        data: result,
+        data: deletedUser,
     };
 });
 const makeAdminIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {

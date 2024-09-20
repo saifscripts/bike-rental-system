@@ -27,16 +27,41 @@ const RentalSchema: Schema = new Schema<IRental>(
             enum: PaymentStatus,
             default: PAYMENT_STATUS.UNPAID,
         },
+        isDeleted: { type: Boolean, default: false },
     },
     {
         timestamps: true,
     },
 );
 
+// Query Middleware
 RentalSchema.pre('find', function (next) {
     const query = this.getQuery();
     query.rentalStatus = { $ne: RENTAL_STATUS.PENDING };
+    query.isDeleted = { $ne: true };
     this.setQuery(query);
+    next();
+});
+
+RentalSchema.pre('findOne', function (next) {
+    if (this.getOptions().getDeletedDocs) {
+        return next();
+    }
+
+    this.find({
+        isDeleted: { $ne: true },
+        rentalStatus: { $ne: RENTAL_STATUS.PENDING },
+    });
+    next();
+});
+
+RentalSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({
+        $match: {
+            isDeleted: { $ne: true },
+            rentalStatus: { $ne: RENTAL_STATUS.PENDING },
+        },
+    });
     next();
 });
 

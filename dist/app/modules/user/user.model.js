@@ -30,6 +30,7 @@ const UserSchema = new mongoose_1.Schema({
         enum: user_constant_1.UserRoles,
         default: 'USER',
     },
+    isDeleted: { type: Boolean, default: false },
 }, {
     timestamps: true,
 });
@@ -48,4 +49,20 @@ UserSchema.statics.comparePassword = function (plain, hashed) {
         return yield bcrypt_1.default.compare(plain, hashed);
     });
 };
+// Query Middleware
+UserSchema.pre('find', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+UserSchema.pre('findOne', function (next) {
+    if (this.getOptions().getDeletedDocs) {
+        return next();
+    }
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+UserSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+    next();
+});
 exports.User = (0, mongoose_1.model)('User', UserSchema);

@@ -4,6 +4,8 @@ import config from '../../config';
 import AppError from '../../errors/AppError';
 import { sendMail } from '../../utils/sendMail';
 import uploadImage from '../../utils/uploadImage';
+import { PAYMENT_STATUS, RENTAL_STATUS } from '../rental/rental.constant';
+import { Rental } from '../rental/rental.model';
 import { CONTACT_FORM_MESSAGE, USER_ROLE } from './user.constant';
 import { IContactUsOptions, IUser } from './user.interface';
 import { User } from './user.model';
@@ -43,12 +45,42 @@ const deleteUserFromDB = async (id: string) => {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
-    const result = await User.deleteOne({ _id: id });
+    // check if the user has an ongoing rental or unpaid rental
+    const ongoingRental = await Rental.findOne({
+        userId: id,
+        $or: [
+            { rentalStatus: RENTAL_STATUS.ONGOING },
+            {
+                rentalStatus: RENTAL_STATUS.RETURNED,
+                paymentStatus: PAYMENT_STATUS.UNPAID,
+            },
+        ],
+    });
+
+    if (ongoingRental) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            "Can't delete user who has an ongoing rental or unpaid rental!",
+        );
+    }
+
+    const deletedUser = await User.findByIdAndUpdate(
+        id,
+        { isDeleted: true },
+        { new: true },
+    );
+
+    if (!deletedUser) {
+        throw new AppError(
+            httpStatus.INTERNAL_SERVER_ERROR,
+            'Failed to delete user!',
+        );
+    }
 
     return {
         statusCode: httpStatus.OK,
         message: 'User deleted successfully',
-        data: result,
+        data: deletedUser,
     };
 };
 

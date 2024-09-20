@@ -11,6 +11,7 @@ export interface IUser {
     address: string;
     avatarURL?: string;
     role: IUserRole;
+    isDeleted: boolean;
 }
 
 export interface ILoginCredentials {

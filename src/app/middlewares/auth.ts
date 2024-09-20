@@ -44,6 +44,10 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
             throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
         }
 
+        if (user.isDeleted) {
+            throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+        }
+
         // check if the decoded user is authorized
         if (authorizedRoles && !authorizedRoles.includes(user.role)) {
             throw new AppError(

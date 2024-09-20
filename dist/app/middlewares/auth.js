@@ -38,6 +38,9 @@ const auth = (...authorizedRoles) => {
         if (!user) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
         }
+        if (user.isDeleted) {
+            throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+        }
         // check if the decoded user is authorized
         if (authorizedRoles && !authorizedRoles.includes(user.role)) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
