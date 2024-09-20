@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import httpStatus from 'http-status';
+import config from './app/config';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFound from './app/middlewares/notFound';
 import router from './app/routes';
@@ -8,7 +9,7 @@ import router from './app/routes';
 const app = express();
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://bikelagbe.vercel.app'],
+    origin: [config.client_base_url as string],
     credentials: true,
 };
 

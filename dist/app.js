@@ -6,12 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const http_status_1 = __importDefault(require("http-status"));
+const config_1 = __importDefault(require("./app/config"));
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
 const routes_1 = __importDefault(require("./app/routes"));
 const app = (0, express_1.default)();
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://bikelagbe.vercel.app'],
+    origin: [config_1.default.client_base_url],
     credentials: true,
 };
 // parsers
