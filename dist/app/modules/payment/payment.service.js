@@ -35,7 +35,10 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
             yield bike_model_1.Bike.findByIdAndUpdate(rental === null || rental === void 0 ? void 0 : rental.bikeId, { isAvailable: false }, { session });
             yield session.commitTransaction();
             yield session.endSession();
-            return payment_constant_1.successPage.replace('{{dashboard-link}}', `${config_1.default.client_base_url}/dashboard/my-rentals`);
+            return (0, payment_utils_1.replaceText)(payment_constant_1.successPage, {
+                'primary-link': `${config_1.default.client_base_url}/dashboard/my-rentals`,
+                'primary-text': 'Continue to Dashboard',
+            });
         }
         catch (_a) {
             yield session.abortTransaction();
@@ -45,9 +48,12 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
     }
     if (verifyResponse && verifyResponse.pay_status === 'Failed') {
         const rental = yield rental_model_1.Rental.findOne({ txnId });
-        return payment_constant_1.failPage
-            .replace('{{retry-link}}', `${config_1.default.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`)
-            .replace('{{back-link}}', `${config_1.default.client_base_url}/bike/${rental === null || rental === void 0 ? void 0 : rental.bikeId}`);
+        return (0, payment_utils_1.replaceText)(payment_constant_1.failPage, {
+            'primary-link': `${config_1.default.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`,
+            'secondary-link': `${config_1.default.client_base_url}/bike/${rental === null || rental === void 0 ? void 0 : rental.bikeId}`,
+            'primary-text': 'Retry Payment',
+            'secondary-text': 'Go Back',
+        });
     }
     return 'Something went wrong!';
 });

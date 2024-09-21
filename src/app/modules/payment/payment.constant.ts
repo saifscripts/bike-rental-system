@@ -1,4 +1,5 @@
-export const successPage = `<!doctype html>
+export const successPage = `
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -13,12 +14,52 @@ export const successPage = `<!doctype html>
         <title>Payment Success</title>
         <style>
             :root {
-                --primary: 47.9 95.8% 53.1%;
-                --primary-foreground: 26 83.3% 14.1%;
-                --secondary: 60 4.8% 95.9%;
-                --secondary-foreground: 24 9.8% 10%;
+                --background: 346 100% 100%;
+                --foreground: 346 5% 10%;
+                --card: 346 50% 100%;
+                --card-foreground: 346 5% 15%;
+                --popover: 346 100% 100%;
+                --popover-foreground: 346 100% 10%;
+                --primary: 346 79.4% 38%;
+                --primary-foreground: 0 0% 100%;
+                --secondary: 346 30% 90%;
+                --secondary-foreground: 0 0% 0%;
+                --muted: 240 4.8% 95.9%;
+                --muted-foreground: 240 3.8% 46.1%;
+                --accent: 308 30% 90%;
+                --accent-foreground: 346 5% 15%;
                 --destructive: 0 84.2% 60.2%;
-                --destructive-foreground: 60 9.1% 97.8%;
+                --destructive-foreground: 0 0% 98%;
+                --border: 20 5.9% 90%;
+                --input: 20 5.9% 90%;
+                --ring: 346 79.4% 38%;
+                --radius: 0.5rem;
+                --success: 150 81.5% 36.1%;
+                --success-foreground: 0 0% 100%;
+            }
+            .dark {
+                --background: 346 50% 10%;
+                --foreground: 346 5% 100%;
+                --card: 346 50% 10%;
+                --card-foreground: 346 5% 100%;
+                --popover: 346 50% 5%;
+                --popover-foreground: 346 5% 100%;
+                --primary: 346 79.4% 38%;
+                --primary-foreground: 0 0% 100%;
+                --secondary: 346 30% 20%;
+                --secondary-foreground: 0 0% 100%;
+                --muted: 308 30% 25%;
+                --muted-foreground: 346 5% 65%;
+                --accent: 308 30% 25%;
+                --accent-foreground: 346 5% 95%;
+                --destructive: 0 100% 50%;
+                --destructive-foreground: 346 5% 100%;
+                --border: 346 30% 50%;
+                --input: 346 30% 50%;
+                --ring: 346 79.4% 38%;
+                --radius: 0.5rem;
+                --success: 150 81.5% 36.1%;
+                --success-foreground: 0 0% 100%;
             }
             * {
                 margin: 0;
@@ -28,7 +69,7 @@ export const successPage = `<!doctype html>
 
             body {
                 font-family: 'Open Sans', sans-serif;
-                background-color: hsl(var(--secondary));
+                background-color: #eeeeee;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -47,18 +88,18 @@ export const successPage = `<!doctype html>
             }
 
             .title {
-                color: #28a745;
+                color: hsl(var(--success));
                 font-size: 24px;
                 margin: 0 0 20px 0;
             }
 
-            p {
-                color: hsl(var(--primary-foreground));
+            .description {
+                color: hsl(var(--foreground));
                 font-size: 16px;
                 margin: 0 0 20px 0;
             }
 
-            .cta-button {
+            .primary-button {
                 background-color: hsl(var(--primary));
                 color: hsl(var(--primary-foreground));
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -72,25 +113,28 @@ export const successPage = `<!doctype html>
                 transition: background-color 0.5s ease;
             }
 
-            .cta-button:hover {
-                filter: brightness(102%);
+            .primary-button:hover {
+                filter: brightness(110%);
             }
         </style>
     </head>
     <body>
         <div class="container">
             <h1 class="title">Payment Successful!</h1>
-            <p>
+            <p class="description">
                 Your payment has been processed successfully. Thank you for
                 rental.
             </p>
-            <a href="{{dashboard-link}}" class="cta-button">Go to Dashboard</a>
+            <a href="{{primary-link}}" class="primary-button"
+                >{{primary-text}}</a
+            >
         </div>
     </body>
 </html>
 `;
 
-export const failPage = `<!doctype html>
+export const failPage = `
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -105,24 +149,52 @@ export const failPage = `<!doctype html>
         <title>Payment Success</title>
         <style>
             :root {
-                --background: 20 14.3% 4.1%;
-                --foreground: 60 9.1% 97.8%;
-                --card: 20 14.3% 4.1%;
-                --card-foreground: 60 9.1% 97.8%;
-                --popover: 20 14.3% 4.1%;
-                --popover-foreground: 60 9.1% 97.8%;
-                --primary: 47.9 95.8% 53.1%;
-                --primary-foreground: 26 83.3% 14.1%;
-                --secondary: 12 6.5% 15.1%;
-                --secondary-foreground: 60 9.1% 97.8%;
-                --muted: 12 6.5% 15.1%;
-                --muted-foreground: 24 5.4% 63.9%;
-                --accent: 12 6.5% 15.1%;
-                --accent-foreground: 60 9.1% 97.8%;
-                --destructive: 0 62.8% 30.6%;
-                --destructive-foreground: 60 9.1% 97.8%;
-                --border: 12 6.5% 15.1%;
-                --input: 12 6.5% 15.1%;
+                --background: 346 100% 100%;
+                --foreground: 346 5% 10%;
+                --card: 346 50% 100%;
+                --card-foreground: 346 5% 15%;
+                --popover: 346 100% 100%;
+                --popover-foreground: 346 100% 10%;
+                --primary: 346 79.4% 38%;
+                --primary-foreground: 0 0% 100%;
+                --secondary: 346 30% 90%;
+                --secondary-foreground: 0 0% 0%;
+                --muted: 240 4.8% 95.9%;
+                --muted-foreground: 240 3.8% 46.1%;
+                --accent: 308 30% 90%;
+                --accent-foreground: 346 5% 15%;
+                --destructive: 0 84.2% 60.2%;
+                --destructive-foreground: 0 0% 98%;
+                --border: 20 5.9% 90%;
+                --input: 20 5.9% 90%;
+                --ring: 346 79.4% 38%;
+                --radius: 0.5rem;
+                --success: 150 81.5% 36.1%;
+                --success-foreground: 0 0% 100%;
+            }
+            .dark {
+                --background: 346 50% 10%;
+                --foreground: 346 5% 100%;
+                --card: 346 50% 10%;
+                --card-foreground: 346 5% 100%;
+                --popover: 346 50% 5%;
+                --popover-foreground: 346 5% 100%;
+                --primary: 346 79.4% 38%;
+                --primary-foreground: 0 0% 100%;
+                --secondary: 346 30% 20%;
+                --secondary-foreground: 0 0% 100%;
+                --muted: 308 30% 25%;
+                --muted-foreground: 346 5% 65%;
+                --accent: 308 30% 25%;
+                --accent-foreground: 346 5% 95%;
+                --destructive: 0 100% 50%;
+                --destructive-foreground: 346 5% 100%;
+                --border: 346 30% 50%;
+                --input: 346 30% 50%;
+                --ring: 346 79.4% 38%;
+                --radius: 0.5rem;
+                --success: 150 81.5% 36.1%;
+                --success-foreground: 0 0% 100%;
             }
             * {
                 margin: 0;
@@ -132,7 +204,7 @@ export const failPage = `<!doctype html>
 
             body {
                 font-family: 'Open Sans', sans-serif;
-                background-color: hsl(var(--secondary));
+                background-color: #eeeeee;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -156,8 +228,8 @@ export const failPage = `<!doctype html>
                 margin: 0 0 20px 0;
             }
 
-            p {
-                color: hsl(var(--primary-foreground));
+            .description {
+                color: hsl(var(--foreground));
                 font-size: 16px;
                 margin: 0 0 20px 0;
             }
@@ -169,7 +241,7 @@ export const failPage = `<!doctype html>
                 gap: 16px;
             }
 
-            .primary-cta {
+            .primary-button {
                 background-color: hsl(var(--primary));
                 color: hsl(var(--primary-foreground));
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -183,15 +255,15 @@ export const failPage = `<!doctype html>
                 transition: background-color 0.5s ease;
             }
 
-            .primary-cta:hover {
-                filter: brightness(102%);
+            .primary-button:hover {
+                filter: brightness(110%);
             }
 
-            .secondary-cta {
+            .secondary-button {
                 background-color: #ffffff;
-                color: hsl(var(--input));
+                color: hsl(var(--foreground));
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-                border: 1px solid hsl(var(--input));
+                border: 1px solid hsl(var(--border));
                 border-radius: 4px;
                 padding: 12px 24px;
                 font-size: 16px;
@@ -201,17 +273,16 @@ export const failPage = `<!doctype html>
                 transition: background-color 0.5s ease;
             }
 
-            .secondary-cta:hover {
-                background-color: hsl(var(--accent));
-                color: hsl(var(--accent-foreground));
+            .secondary-button:hover {
+                filter: brightness(110%);
             }
 
             @media screen and (max-width: 400px) {
                 .cta {
-                    flex-direction: column;
+                    flex-direction: column-reverse;
                 }
-                .primary-cta,
-                .secondary-cta {
+                .primary-button,
+                .secondary-button {
                     width: 80%;
                 }
             }
@@ -220,13 +291,17 @@ export const failPage = `<!doctype html>
     <body>
         <div class="container">
             <h1 class="title">Payment Failed!</h1>
-            <p>
+            <p class="description">
                 Oops! Something went wrong with your payment. Please try again
                 or contact support if you need assistance.
             </p>
             <div class="cta">
-                <a href="{{back-link}}" class="secondary-cta">Go Back</a>
-                <a href="{{retry-link}}" class="primary-cta">Retry Payment</a>
+                <a href="{{secondary-link}}" class="secondary-button"
+                    >{{secondary-text}}</a
+                >
+                <a href="{{primary-link}}" class="primary-button"
+                    >{{primary-text}}</a
+                >
             </div>
         </div>
     </body>

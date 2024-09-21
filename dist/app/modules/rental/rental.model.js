@@ -57,23 +57,4 @@ RentalSchema.pre('find', function (next) {
     this.setQuery(query);
     next();
 });
-RentalSchema.pre('findOne', function (next) {
-    if (this.getOptions().getDeletedDocs) {
-        return next();
-    }
-    this.find({
-        isDeleted: { $ne: true },
-        rentalStatus: { $ne: rental_constant_1.RENTAL_STATUS.PENDING },
-    });
-    next();
-});
-RentalSchema.pre('aggregate', function (next) {
-    this.pipeline().unshift({
-        $match: {
-            isDeleted: { $ne: true },
-            rentalStatus: { $ne: rental_constant_1.RENTAL_STATUS.PENDING },
-        },
-    });
-    next();
-});
 exports.Rental = mongoose_1.default.model('Rental', RentalSchema);

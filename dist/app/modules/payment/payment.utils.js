@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyPayment = exports.initiatePayment = exports.generateTransactionId = void 0;
+exports.replaceText = exports.verifyPayment = exports.initiatePayment = exports.generateTransactionId = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = __importDefault(require("../../config"));
 const generateTransactionId = () => {
@@ -54,3 +54,8 @@ const verifyPayment = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
     return response.data;
 });
 exports.verifyPayment = verifyPayment;
+// replace the text with the actual text
+const replaceText = (template, replacements) => {
+    return template.replace(/{{(.*?)}}/g, (match, p1) => replacements[p1] || match);
+};
+exports.replaceText = replaceText;

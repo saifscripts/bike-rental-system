@@ -4,7 +4,7 @@ import { Bike } from '../bike/bike.model';
 import { PAYMENT_STATUS, RENTAL_STATUS } from '../rental/rental.constant';
 import { Rental } from '../rental/rental.model';
 import { failPage, successPage } from './payment.constant';
-import { verifyPayment } from './payment.utils';
+import { replaceText, verifyPayment } from './payment.utils';
 
 const confirmRental = async (txnId: string) => {
     const verifyResponse = await verifyPayment(txnId);
@@ -35,10 +35,10 @@ const confirmRental = async (txnId: string) => {
             await session.commitTransaction();
             await session.endSession();
 
-            return successPage.replace(
-                '{{dashboard-link}}',
-                `${config.client_base_url}/dashboard/my-rentals`,
-            );
+            return replaceText(successPage, {
+                'primary-link': `${config.client_base_url}/dashboard/my-rentals`,
+                'primary-text': 'Continue to Dashboard',
+            });
         } catch {
             await session.abortTransaction();
             await session.endSession();
@@ -49,15 +49,12 @@ const confirmRental = async (txnId: string) => {
     if (verifyResponse && verifyResponse.pay_status === 'Failed') {
         const rental = await Rental.findOne({ txnId });
 
-        return failPage
-            .replace(
-                '{{retry-link}}',
-                `${config.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`,
-            )
-            .replace(
-                '{{back-link}}',
-                `${config.client_base_url}/bike/${rental?.bikeId}`,
-            );
+        return replaceText(failPage, {
+            'primary-link': `${config.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`,
+            'secondary-link': `${config.client_base_url}/bike/${rental?.bikeId}`,
+            'primary-text': 'Retry Payment',
+            'secondary-text': 'Go Back',
+        });
     }
 
     return 'Something went wrong!';

@@ -72,7 +72,7 @@ const createRentalIntoDB = async (
 
     return {
         statusCode: httpStatus.CREATED,
-        message: 'Rental created successfully',
+        message: 'Rental initiated successfully',
         data: paymentResponse,
     };
 };

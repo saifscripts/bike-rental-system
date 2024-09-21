@@ -59,7 +59,7 @@ const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, v
         txnId }));
     return {
         statusCode: http_status_1.default.CREATED,
-        message: 'Rental created successfully',
+        message: 'Rental initiated successfully',
         data: paymentResponse,
     };
 });
