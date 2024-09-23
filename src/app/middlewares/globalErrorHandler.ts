@@ -1,17 +1,19 @@
 import { ErrorRequestHandler } from 'express';
 import httpStatus from 'http-status';
+import { JsonWebTokenError } from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { ZodError } from 'zod';
 import config from '../config';
 import AppError from '../errors/AppError';
 import handleCastError from '../errors/handleCastError';
 import handleDuplicateError from '../errors/handleDuplicateError';
+import handleJWTError from '../errors/handleJWTError';
 import handleValidationError from '../errors/handleValidationError';
 import handleZodError from '../errors/handleZodError';
 import { IErrorMessage } from '../interfaces/errors';
 
 const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-    // default response data
+    // default error response
     let statusCode: number = httpStatus.INTERNAL_SERVER_ERROR;
     let message: string = 'Something went wrong!';
     let errorMessages: IErrorMessage[] = [
@@ -42,6 +44,11 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
         statusCode = formattedError.statusCode;
         message = formattedError.message;
         errorMessages = formattedError.errorMessages;
+    } else if (err instanceof JsonWebTokenError) {
+        const formattedError = handleJWTError(err);
+        statusCode = formattedError.statusCode;
+        message = formattedError.message;
+        errorMessages = formattedError.errorMessages;
     } else if (err instanceof AppError) {
         statusCode = err.statusCode;
         message = err.message;
@@ -67,7 +74,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
         statusCode,
         message,
         errorMessages,
-        stack: config.NODE_ENV === 'production' && err?.stack,
+        stack: config.NODE_ENV === 'development' && err?.stack,
     });
 };
 

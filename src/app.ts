@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import httpStatus from 'http-status';
@@ -16,6 +17,7 @@ const corsOptions = {
 // parsers
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 // routes
 app.use('/api/v1', router);
