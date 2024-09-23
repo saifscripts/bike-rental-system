@@ -9,6 +9,15 @@ import { IChangePassword } from './auth.interface';
 import { createToken } from './auth.util';
 
 const signup = async (payload: IUser) => {
+    const user = await User.findOne({ email: payload?.email });
+
+    if (user) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'A user already exists with this email!',
+        );
+    }
+
     const newUser = await User.create(payload);
 
     return {

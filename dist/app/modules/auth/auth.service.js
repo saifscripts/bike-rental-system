@@ -21,6 +21,10 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const user_model_1 = require("../user/user.model");
 const auth_util_1 = require("./auth.util");
 const signup = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email });
+    if (user) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'A user already exists with this email!');
+    }
     const newUser = yield user_model_1.User.create(payload);
     return {
         statusCode: http_status_1.default.CREATED,
