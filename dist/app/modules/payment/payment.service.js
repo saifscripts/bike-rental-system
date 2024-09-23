@@ -60,20 +60,26 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
 const completeRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyResponse = yield (0, payment_utils_1.verifyPayment)(txnId);
     if (verifyResponse && verifyResponse.pay_status === 'Successful') {
-        // update payment status and paid amount
-        yield rental_model_1.Rental.findOneAndUpdate({ finalTxnId: txnId }, {
+        // update payment status and increment paid amount
+        const updatedRental = yield rental_model_1.Rental.findOneAndUpdate({ finalTxnId: txnId }, {
             $set: { paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID },
             $inc: { paidAmount: Number(verifyResponse === null || verifyResponse === void 0 ? void 0 : verifyResponse.amount) },
         }, { new: true });
+        if (!updatedRental) {
+            return 'Something went wrong!';
+        }
         return (0, payment_utils_1.replaceText)(payment_constant_1.successPage, {
             'primary-link': `${config_1.default.client_base_url}/dashboard/my-rentals`,
             'primary-text': 'Continue to Dashboard',
         });
     }
     if (verifyResponse && verifyResponse.pay_status === 'Failed') {
-        return payment_constant_1.failPage
-            .replace('{{retry-link}}', `${config_1.default.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`)
-            .replace('{{back-link}}', `${config_1.default.client_base_url}/dashboard/my-rentals`);
+        return (0, payment_utils_1.replaceText)(payment_constant_1.failPage, {
+            'primary-link': `${config_1.default.payment_base_url}/payment_page.php?track_id=${verifyResponse.pg_txnid}`,
+            'secondary-link': `${config_1.default.client_base_url}/dashboard/my-rentals`,
+            'primary-text': 'Retry Payment',
+            'secondary-text': 'Go Back',
+        });
     }
     return 'Something went wrong!';
 });

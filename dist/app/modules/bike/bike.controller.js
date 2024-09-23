@@ -16,28 +16,28 @@ exports.BikeControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
-// Route: /api/bikes (POST)
+// Route: /api/v1/bikes (POST)
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.BikeServices.createBikeIntoDB(req.body, req.file);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/bikes (GET)
+// Route: /api/v1/bikes (GET)
 const getBikes = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.BikeServices.getBikesFromDB(req.query);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/bikes/:id (GET)
+// Route: /api/v1/bikes/:id (GET)
 const getSingleBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.BikeServices.getSingleBikeFromDB(req.params.id);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/bikes/:id (PUT)
+// Route: /api/v1/bikes/:id (PUT)
 const updateBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.BikeServices.updateBikeIntoDB(id, req.body, req === null || req === void 0 ? void 0 : req.file);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/bikes/:id (DELETE)
+// Route: /api/v1/bikes/:id (DELETE)
 const deleteBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.BikeServices.deleteBikeFromDB(id);

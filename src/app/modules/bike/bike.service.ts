@@ -12,6 +12,7 @@ const createBikeIntoDB = async (payload: IBike, image: { buffer: Buffer }) => {
         throw new AppError(httpStatus.BAD_REQUEST, 'Image is required');
     }
 
+    // use this id to upload image and create bike
     const _id = new mongoose.Types.ObjectId();
 
     const imageURL = await uploadImage(image.buffer, _id.toString(), 'bike');
@@ -33,7 +34,6 @@ const getBikesFromDB = async (query: Record<string, unknown>) => {
         .paginate()
         .fields();
 
-    // console.log(bikeQuery);
     const bikes = await bikeQuery.modelQuery;
     const meta = await bikeQuery.countTotal();
 
@@ -74,6 +74,12 @@ const updateBikeIntoDB = async (
     payload: Partial<IBike>,
     image?: { buffer: Buffer },
 ) => {
+    const isBikeExists = await Bike.findById(id);
+
+    if (!isBikeExists) {
+        throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
+    }
+
     if (image) {
         const imageURL = (await uploadImage(
             image.buffer,
@@ -82,14 +88,7 @@ const updateBikeIntoDB = async (
         )) as string;
         payload.imageURL = imageURL;
     }
-    const isBikeExists = await Bike.findById(id);
 
-    // check if the bike exist
-    if (!isBikeExists) {
-        throw new AppError(httpStatus.NOT_FOUND, 'Bike not found!');
-    }
-
-    // check if the bike exists
     const updatedBike = await Bike.findByIdAndUpdate(id, payload, {
         new: true,
     });

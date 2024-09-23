@@ -1,3 +1,5 @@
+/* The QueryBuilder class in TypeScript provides methods for building and executing queries with
+search, filter, sort, pagination, field selection, and total count functionalities. */
 import { FilterQuery, Query } from 'mongoose';
 
 class QueryBuilder<T> {
@@ -12,6 +14,7 @@ class QueryBuilder<T> {
     search(searchableFields: string[]) {
         const searchTerm = this?.query?.searchTerm || '';
 
+        // search for the searchTerm in the searchableFields
         this.modelQuery = this.modelQuery.find({
             $or: searchableFields.map((field) => ({
                 [field]: { $regex: searchTerm, $options: 'i' },
@@ -21,6 +24,7 @@ class QueryBuilder<T> {
     }
 
     filter() {
+        // extract the query object and remove the fields that are not needed for the query
         const _query = { ...this.query };
         const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
         excludeFields.forEach((field) => delete _query[field]);
@@ -48,6 +52,7 @@ class QueryBuilder<T> {
     }
 
     fields() {
+        // generate the fields string to get selected fields ('name,price,-description' -> 'name price -description')
         const fields =
             (this?.query?.fields as string)?.split(',')?.join(' ') || '-__v';
 
@@ -55,6 +60,7 @@ class QueryBuilder<T> {
         return this;
     }
 
+    // generate meta data for pagination
     async countTotal() {
         const totalQueries = this.modelQuery.getFilter();
         const total = await this.modelQuery.model.countDocuments(totalQueries);

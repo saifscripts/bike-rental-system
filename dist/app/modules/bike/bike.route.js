@@ -19,7 +19,7 @@ router
     .get(bike_controller_1.BikeControllers.getBikes);
 router
     .route('/:id')
-    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), upload_1.upload.single('image'), bodyParser_1.bodyParser, (0, validateRequest_1.default)(bike_validation_1.BikeValidations.updateBikeValidationSchema), bike_controller_1.BikeControllers.updateBike)
     .get(bike_controller_1.BikeControllers.getSingleBike)
+    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), upload_1.upload.single('image'), bodyParser_1.bodyParser, (0, validateRequest_1.default)(bike_validation_1.BikeValidations.updateBikeValidationSchema), bike_controller_1.BikeControllers.updateBike)
     .delete((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), bike_controller_1.BikeControllers.deleteBike);
 exports.BikeRoutes = router;

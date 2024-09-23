@@ -37,6 +37,11 @@ const login = async (payload: ILoginCredentials) => {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
+    // check if the user is deleted
+    if (user.isDeleted) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
     // check if the password matched
     const isPasswordMatched = await User.comparePassword(
         payload?.password,
@@ -89,11 +94,17 @@ const refreshToken = async (token: string) => {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
+    // check if the user is deleted
+    if (user.isDeleted) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
     const jwtPayload = {
         id: user._id,
         role: user.role,
     };
 
+    // create access token
     const accessToken = createToken(
         jwtPayload,
         config.jwt_access_secret as string,

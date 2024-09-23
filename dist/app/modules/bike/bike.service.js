@@ -24,6 +24,7 @@ const createBikeIntoDB = (payload, image) => __awaiter(void 0, void 0, void 0, f
     if (!image) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Image is required');
     }
+    // use this id to upload image and create bike
     const _id = new mongoose_1.default.Types.ObjectId();
     const imageURL = yield (0, uploadImage_1.default)(image.buffer, _id.toString(), 'bike');
     const newBike = yield bike_model_1.Bike.create(Object.assign(Object.assign({}, payload), { _id, imageURL }));
@@ -40,7 +41,6 @@ const getBikesFromDB = (query) => __awaiter(void 0, void 0, void 0, function* ()
         .sort()
         .paginate()
         .fields();
-    // console.log(bikeQuery);
     const bikes = yield bikeQuery.modelQuery;
     const meta = yield bikeQuery.countTotal();
     // check if retrieved data is empty
@@ -71,16 +71,14 @@ const getSingleBikeFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
     };
 });
 const updateBikeIntoDB = (id, payload, image) => __awaiter(void 0, void 0, void 0, function* () {
+    const isBikeExists = yield bike_model_1.Bike.findById(id);
+    if (!isBikeExists) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
+    }
     if (image) {
         const imageURL = (yield (0, uploadImage_1.default)(image.buffer, id, 'bike'));
         payload.imageURL = imageURL;
     }
-    const isBikeExists = yield bike_model_1.Bike.findById(id);
-    // check if the bike exist
-    if (!isBikeExists) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Bike not found!');
-    }
-    // check if the bike exists
     const updatedBike = yield bike_model_1.Bike.findByIdAndUpdate(id, payload, {
         new: true,
     });

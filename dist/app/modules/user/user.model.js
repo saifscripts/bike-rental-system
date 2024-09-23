@@ -49,7 +49,7 @@ UserSchema.statics.comparePassword = function (plain, hashed) {
         return yield bcrypt_1.default.compare(plain, hashed);
     });
 };
-// Query Middleware
+// Query Middlewares
 UserSchema.pre('find', function (next) {
     this.find({ isDeleted: { $ne: true } });
     next();

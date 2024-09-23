@@ -4,6 +4,7 @@ import config from '../../config';
 import AppError from '../../errors/AppError';
 import { sendMail } from '../../utils/sendMail';
 import uploadImage from '../../utils/uploadImage';
+import { replaceText } from '../payment/payment.utils';
 import { PAYMENT_STATUS, RENTAL_STATUS } from '../rental/rental.constant';
 import { Rental } from '../rental/rental.model';
 import { CONTACT_FORM_MESSAGE, USER_ROLE } from './user.constant';
@@ -46,7 +47,8 @@ const deleteUserFromDB = async (id: string) => {
     }
 
     // check if the user has an ongoing rental or unpaid rental
-    const ongoingRental = await Rental.findOne({
+    // make sure this do not return any PENDING rentals
+    const ongoingOrUnpaidRental = await Rental.findOne({
         userId: id,
         $or: [
             { rentalStatus: RENTAL_STATUS.ONGOING },
@@ -57,7 +59,7 @@ const deleteUserFromDB = async (id: string) => {
         ],
     });
 
-    if (ongoingRental) {
+    if (ongoingOrUnpaidRental) {
         throw new AppError(
             httpStatus.BAD_REQUEST,
             "Can't delete user who has an ongoing rental or unpaid rental!",
@@ -91,6 +93,10 @@ const makeAdminIntoDB = async (id: string) => {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
+    if (user.role === USER_ROLE.ADMIN) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'User is already an admin!');
+    }
+
     const result = await User.findByIdAndUpdate(id, { role: USER_ROLE.ADMIN });
 
     return {
@@ -105,6 +111,10 @@ const removeAdminFromDB = async (id: string) => {
 
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
+    if (user.role !== USER_ROLE.ADMIN) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'User is not an admin!');
     }
 
     const result = await User.findByIdAndUpdate(id, { role: USER_ROLE.USER });
@@ -139,15 +149,17 @@ const updateProfileIntoDB = async (id: string, payload: Partial<IUser>) => {
 };
 
 const contactUsViaMail = async (payload: IContactUsOptions) => {
-    const emailBody = CONTACT_FORM_MESSAGE.replace('{{name}}', payload.name)
-        .replace('{{email}}', payload.email)
-        .replace('{{phone}}', payload.phone)
-        .replace('{{message}}', payload.message);
+    const emailBody = replaceText(CONTACT_FORM_MESSAGE, {
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        message: payload.message,
+    });
 
     const result = await sendMail({
         from: payload.email,
         to: config.mail_auth_user!,
-        subject: payload.name,
+        subject: `Contact Us Form Submission from ${payload.name}`,
         html: emailBody,
     });
 

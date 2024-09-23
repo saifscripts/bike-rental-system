@@ -174,15 +174,19 @@ const returnBikeIntoDB = async (
             Number(bike.pricePerHour),
         );
 
+        /* if total cost is less then advance payment, then paid amount should be the total cost
+        the rest of the amount will be returned to the user */
         const paidAmount =
-            totalCost > rental.paidAmount ? rental.paidAmount : totalCost;
+            totalCost < rental.paidAmount ? totalCost : rental.paidAmount;
 
+        /* if total cost is less then advance payment, then payment status will be paid
+        else payment status will be unpaid */
         const paymentStatus =
-            totalCost > rental.paidAmount
-                ? PAYMENT_STATUS.UNPAID
-                : PAYMENT_STATUS.PAID;
+            totalCost < rental.paidAmount
+                ? PAYMENT_STATUS.PAID
+                : PAYMENT_STATUS.UNPAID;
 
-        // calculate cost and update relevant rental data
+        // update relevant rental data
         const updatedRental = await Rental.findByIdAndUpdate(
             rentalId,
             {

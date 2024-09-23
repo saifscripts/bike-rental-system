@@ -45,7 +45,7 @@ UserSchema.statics.comparePassword = async function (
     return await bcrypt.compare(plain, hashed);
 };
 
-// Query Middleware
+// Query Middlewares
 UserSchema.pre('find', function (next) {
     this.find({ isDeleted: { $ne: true } });
     next();

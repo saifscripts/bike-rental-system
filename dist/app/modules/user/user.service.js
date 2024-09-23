@@ -19,6 +19,7 @@ const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const sendMail_1 = require("../../utils/sendMail");
 const uploadImage_1 = __importDefault(require("../../utils/uploadImage"));
+const payment_utils_1 = require("../payment/payment.utils");
 const rental_constant_1 = require("../rental/rental.constant");
 const rental_model_1 = require("../rental/rental.model");
 const user_constant_1 = require("./user.constant");
@@ -53,7 +54,8 @@ const deleteUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
     // check if the user has an ongoing rental or unpaid rental
-    const ongoingRental = yield rental_model_1.Rental.findOne({
+    // make sure this do not return any PENDING rentals
+    const ongoingOrUnpaidRental = yield rental_model_1.Rental.findOne({
         userId: id,
         $or: [
             { rentalStatus: rental_constant_1.RENTAL_STATUS.ONGOING },
@@ -63,7 +65,7 @@ const deleteUserFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
             },
         ],
     });
-    if (ongoingRental) {
+    if (ongoingOrUnpaidRental) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, "Can't delete user who has an ongoing rental or unpaid rental!");
     }
     const deletedUser = yield user_model_1.User.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
@@ -81,6 +83,9 @@ const makeAdminIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
+    if (user.role === user_constant_1.USER_ROLE.ADMIN) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'User is already an admin!');
+    }
     const result = yield user_model_1.User.findByIdAndUpdate(id, { role: user_constant_1.USER_ROLE.ADMIN });
     return {
         statusCode: http_status_1.default.OK,
@@ -92,6 +97,9 @@ const removeAdminFromDB = (id) => __awaiter(void 0, void 0, void 0, function* ()
     const user = yield user_model_1.User.findById(id);
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+    }
+    if (user.role !== user_constant_1.USER_ROLE.ADMIN) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'User is not an admin!');
     }
     const result = yield user_model_1.User.findByIdAndUpdate(id, { role: user_constant_1.USER_ROLE.USER });
     return {
@@ -119,14 +127,16 @@ const updateProfileIntoDB = (id, payload) => __awaiter(void 0, void 0, void 0, f
     };
 });
 const contactUsViaMail = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const emailBody = user_constant_1.CONTACT_FORM_MESSAGE.replace('{{name}}', payload.name)
-        .replace('{{email}}', payload.email)
-        .replace('{{phone}}', payload.phone)
-        .replace('{{message}}', payload.message);
+    const emailBody = (0, payment_utils_1.replaceText)(user_constant_1.CONTACT_FORM_MESSAGE, {
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        message: payload.message,
+    });
     const result = yield (0, sendMail_1.sendMail)({
         from: payload.email,
         to: config_1.default.mail_auth_user,
-        subject: payload.name,
+        subject: `Contact Us Form Submission from ${payload.name}`,
         html: emailBody,
     });
     if (!result.messageId) {

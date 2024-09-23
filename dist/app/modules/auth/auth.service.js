@@ -38,6 +38,10 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
+    // check if the user is deleted
+    if (user.isDeleted) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+    }
     // check if the password matched
     const isPasswordMatched = yield user_model_1.User.comparePassword(payload === null || payload === void 0 ? void 0 : payload.password, user === null || user === void 0 ? void 0 : user.password);
     if (!isPasswordMatched) {
@@ -66,10 +70,15 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
+    // check if the user is deleted
+    if (user.isDeleted) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
+    }
     const jwtPayload = {
         id: user._id,
         role: user.role,
     };
+    // create access token
     const accessToken = (0, auth_util_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_exp_in);
     return {
         statusCode: http_status_1.default.OK,

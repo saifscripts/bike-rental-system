@@ -22,6 +22,7 @@ router
 
 router
     .route('/:id')
+    .get(BikeControllers.getSingleBike)
     .put(
         auth(USER_ROLE.ADMIN),
         upload.single('image'),
@@ -29,7 +30,6 @@ router
         validateRequest(BikeValidations.updateBikeValidationSchema),
         BikeControllers.updateBike,
     )
-    .get(BikeControllers.getSingleBike)
     .delete(auth(USER_ROLE.ADMIN), BikeControllers.deleteBike);
 
 export const BikeRoutes = router;

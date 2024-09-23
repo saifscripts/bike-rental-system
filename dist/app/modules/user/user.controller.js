@@ -16,17 +16,17 @@ exports.UserControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_service_1 = require("./user.service");
-// Route: /api/users/ (GET)
+// Route: /api/v1/users/ (GET)
 const getUsers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_service_1.UserServices.getUsersFromDB(req.query);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/users/:id (DELETE)
+// Route: /api/v1/users/:id (DELETE)
 const deleteUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_service_1.UserServices.deleteUserFromDB(req.params.id);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/users/:id/make-admin (PUT)
+// Route: /api/v1/users/:id/make-admin (PUT)
 const makeAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_service_1.UserServices.makeAdminIntoDB(req.params.id);
     (0, sendResponse_1.default)(res, result);
@@ -36,7 +36,7 @@ const removeAdmin = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     const result = yield user_service_1.UserServices.removeAdminFromDB(req.params.id);
     (0, sendResponse_1.default)(res, result);
 }));
-// Route: /api/users/me (GET)
+// Route: /api/v1/users/me (GET)
 const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
     const result = yield user_service_1.UserServices.getProfileFromDB(id);
@@ -48,12 +48,14 @@ const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     const result = yield user_service_1.UserServices.updateProfileIntoDB(id, req.body);
     (0, sendResponse_1.default)(res, result);
 }));
-const contactUs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_service_1.UserServices.contactUsViaMail(req.body);
-    (0, sendResponse_1.default)(res, result);
-}));
+// Route: /api/v1/users/avatar (POST)
 const updateAvatar = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_service_1.UserServices.updateAvatar(req.user.id, req.file);
+    (0, sendResponse_1.default)(res, result);
+}));
+// Route: /api/v1/users/contact-us (POST)
+const contactUs = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserServices.contactUsViaMail(req.body);
     (0, sendResponse_1.default)(res, result);
 }));
 exports.UserControllers = {

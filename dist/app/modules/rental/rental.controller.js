@@ -16,27 +16,29 @@ exports.RentalControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const rental_service_1 = require("./rental.service");
-// Route: /api/rentals (POST)
+// Route: /api/v1/rentals (POST)
 const createRental = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield rental_service_1.RentalServices.createRentalIntoDB(req.user, req.body);
     (0, sendResponse_1.default)(res, result);
 }));
-const initiateRemainingPayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield rental_service_1.RentalServices.initiateRemainingPayment(req.params.rentalId);
-    (0, sendResponse_1.default)(res, result);
-}));
-// Route: /api/rentals/:id/return (PUT)
-const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield rental_service_1.RentalServices.returnBikeIntoDB(req.params.rentalId, req.body);
-    (0, sendResponse_1.default)(res, result);
-}));
-// Route: /api/rentals (GET)
+// Route: /api/v1/rentals (GET)
 const getMyRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield rental_service_1.RentalServices.getMyRentalsFromDB(req.user.id, req.query);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/v1/rentals/all (GET)
 const getAllRentals = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield rental_service_1.RentalServices.getAllRentalsFromDB(req.query);
+    (0, sendResponse_1.default)(res, result);
+}));
+// Route: /api/v1/rentals/:rentalId/return (PUT)
+const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rental_service_1.RentalServices.returnBikeIntoDB(req.params.rentalId, req.body);
+    (0, sendResponse_1.default)(res, result);
+}));
+// Route: /api/v1/rentals/:rentalId/pay-remaining (PUT)
+const initiateRemainingPayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield rental_service_1.RentalServices.initiateRemainingPayment(req.params.rentalId);
     (0, sendResponse_1.default)(res, result);
 }));
 exports.RentalControllers = {

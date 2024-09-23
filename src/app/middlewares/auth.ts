@@ -19,9 +19,10 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
             );
         }
 
-        const token = authHeader.split(' ')[1]; // split and retrieve token
+        // get the token from the auth header
+        const token = authHeader.split(' ')[1];
 
-        // check if token is present
+        // check if there is a token
         if (!token) {
             throw new AppError(
                 httpStatus.UNAUTHORIZED,
@@ -44,11 +45,12 @@ const auth = (...authorizedRoles: IUserRole[]): RequestHandler => {
             throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
         }
 
+        // check if the user is deleted
         if (user.isDeleted) {
             throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
         }
 
-        // check if the decoded user is authorized
+        // check if the user is authorized
         if (authorizedRoles && !authorizedRoles.includes(user.role)) {
             throw new AppError(
                 httpStatus.UNAUTHORIZED,
