@@ -25,8 +25,9 @@ const auth = (...authorizedRoles) => {
         if (!authHeader) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
-        const token = authHeader.split(' ')[1]; // split and retrieve token
-        // check if token is present
+        // get the token from the auth header
+        const token = authHeader.split(' ')[1];
+        // check if there is a token
         if (!token) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }
@@ -38,10 +39,11 @@ const auth = (...authorizedRoles) => {
         if (!user) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
         }
+        // check if the user is deleted
         if (user.isDeleted) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
         }
-        // check if the decoded user is authorized
+        // check if the user is authorized
         if (authorizedRoles && !authorizedRoles.includes(user.role)) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized!');
         }

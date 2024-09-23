@@ -13,7 +13,7 @@ const handleDuplicateError_1 = __importDefault(require("../errors/handleDuplicat
 const handleValidationError_1 = __importDefault(require("../errors/handleValidationError"));
 const handleZodError_1 = __importDefault(require("../errors/handleZodError"));
 const globalErrorHandler = (err, _req, res, _next) => {
-    // default response data
+    // default error response
     let statusCode = http_status_1.default.INTERNAL_SERVER_ERROR;
     let message = 'Something went wrong!';
     let errorMessages = [
@@ -72,7 +72,7 @@ const globalErrorHandler = (err, _req, res, _next) => {
         statusCode,
         message,
         errorMessages,
-        stack: config_1.default.NODE_ENV === 'production' && (err === null || err === void 0 ? void 0 : err.stack),
+        stack: config_1.default.NODE_ENV === 'development' && (err === null || err === void 0 ? void 0 : err.stack),
     });
 };
 exports.default = globalErrorHandler;

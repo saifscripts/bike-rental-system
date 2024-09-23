@@ -17,6 +17,7 @@ class QueryBuilder {
     search(searchableFields) {
         var _a;
         const searchTerm = ((_a = this === null || this === void 0 ? void 0 : this.query) === null || _a === void 0 ? void 0 : _a.searchTerm) || '';
+        // search for the searchTerm in the searchableFields
         this.modelQuery = this.modelQuery.find({
             $or: searchableFields.map((field) => ({
                 [field]: { $regex: searchTerm, $options: 'i' },
@@ -25,6 +26,7 @@ class QueryBuilder {
         return this;
     }
     filter() {
+        // extract the query object and remove the fields that are not needed for the query
         const _query = Object.assign({}, this.query);
         const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
         excludeFields.forEach((field) => delete _query[field]);
@@ -48,10 +50,12 @@ class QueryBuilder {
     }
     fields() {
         var _a, _b, _c;
+        // generate the fields string to get selected fields ('name,price,-description' -> 'name price -description')
         const fields = ((_c = (_b = (_a = this === null || this === void 0 ? void 0 : this.query) === null || _a === void 0 ? void 0 : _a.fields) === null || _b === void 0 ? void 0 : _b.split(',')) === null || _c === void 0 ? void 0 : _c.join(' ')) || '-__v';
         this.modelQuery = this.modelQuery.select(fields);
         return this;
     }
+    // generate meta data for pagination
     countTotal() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;

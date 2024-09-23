@@ -65,7 +65,10 @@ const completeRental = (txnId) => __awaiter(void 0, void 0, void 0, function* ()
             $set: { paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID },
             $inc: { paidAmount: Number(verifyResponse === null || verifyResponse === void 0 ? void 0 : verifyResponse.amount) },
         }, { new: true });
-        return payment_constant_1.successPage.replace('{{dashboard-link}}', `${config_1.default.client_base_url}/dashboard/my-rentals`);
+        return (0, payment_utils_1.replaceText)(payment_constant_1.successPage, {
+            'primary-link': `${config_1.default.client_base_url}/dashboard/my-rentals`,
+            'primary-text': 'Continue to Dashboard',
+        });
     }
     if (verifyResponse && verifyResponse.pay_status === 'Failed') {
         return payment_constant_1.failPage
