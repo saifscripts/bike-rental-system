@@ -99,6 +99,7 @@ const initiateRemainingPayment = async (rentalId: string) => {
 
     const remainingAmount = rental.totalCost - rental.paidAmount;
 
+    // check if the payment is already done
     if (remainingAmount <= 0) {
         // update relevant rental data
         const updatedRental = await Rental.findByIdAndUpdate(

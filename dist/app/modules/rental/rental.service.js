@@ -79,6 +79,7 @@ const initiateRemainingPayment = (rentalId) => __awaiter(void 0, void 0, void 0,
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
     const remainingAmount = rental.totalCost - rental.paidAmount;
+    // check if the payment is already done
     if (remainingAmount <= 0) {
         // update relevant rental data
         const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(rentalId, {
