@@ -78,10 +78,28 @@ const initiateRemainingPayment = (rentalId) => __awaiter(void 0, void 0, void 0,
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
+    const remainingAmount = rental.totalCost - rental.paidAmount;
+    if (remainingAmount <= 0) {
+        // update relevant rental data
+        const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(rentalId, {
+            paidAmount: rental.totalCost,
+            paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID,
+        }, {
+            new: true,
+        });
+        if (!updatedRental) {
+            throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to update rental data!');
+        }
+        return {
+            statusCode: http_status_1.default.OK,
+            message: `Payment already done. You will get a refund of ${-remainingAmount} taka`,
+            data: updatedRental,
+        };
+    }
     const txnId = (0, payment_utils_1.generateTransactionId)();
     const paymentResponse = yield (0, payment_utils_1.initiatePayment)({
         txnId,
-        amount: rental.totalCost - rental.paidAmount,
+        amount: remainingAmount,
         successURL: `${config_1.default.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
         failURL: `${config_1.default.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
         cancelURL: `${config_1.default.client_base_url}/dashboard/my-rentals`,
@@ -125,21 +143,11 @@ const returnBikeIntoDB = (rentalId, payload) => __awaiter(void 0, void 0, void 0
     try {
         session.startTransaction();
         const totalCost = (0, rental_util_1.calculateTotalCost)(rental.startTime, payload.returnTime, Number(bike.pricePerHour));
-        /* if total cost is less then advance payment, then paid amount should be the total cost
-        the rest of the amount will be returned to the user */
-        const paidAmount = totalCost < rental.paidAmount ? totalCost : rental.paidAmount;
-        /* if total cost is less then advance payment, then payment status will be paid
-        else payment status will be unpaid */
-        const paymentStatus = totalCost < rental.paidAmount
-            ? rental_constant_1.PAYMENT_STATUS.PAID
-            : rental_constant_1.PAYMENT_STATUS.UNPAID;
         // update relevant rental data
         const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(rentalId, {
             returnTime: payload.returnTime,
             rentalStatus: rental_constant_1.RENTAL_STATUS.RETURNED,
             totalCost,
-            paidAmount,
-            paymentStatus,
         }, {
             new: true,
             session,

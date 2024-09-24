@@ -97,11 +97,40 @@ const initiateRemainingPayment = async (rentalId: string) => {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
+    const remainingAmount = rental.totalCost - rental.paidAmount;
+
+    if (remainingAmount <= 0) {
+        // update relevant rental data
+        const updatedRental = await Rental.findByIdAndUpdate(
+            rentalId,
+            {
+                paidAmount: rental.totalCost,
+                paymentStatus: PAYMENT_STATUS.PAID,
+            },
+            {
+                new: true,
+            },
+        );
+
+        if (!updatedRental) {
+            throw new AppError(
+                httpStatus.INTERNAL_SERVER_ERROR,
+                'Failed to update rental data!',
+            );
+        }
+
+        return {
+            statusCode: httpStatus.OK,
+            message: `Payment already done. You will get a refund of ${-remainingAmount} taka`,
+            data: updatedRental,
+        };
+    }
+
     const txnId = generateTransactionId();
 
     const paymentResponse = await initiatePayment({
         txnId,
-        amount: rental.totalCost - rental.paidAmount,
+        amount: remainingAmount,
         successURL: `${config.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
         failURL: `${config.base_url}/api/v1/payment/complete-rental?TXNID=${txnId}`,
         cancelURL: `${config.client_base_url}/dashboard/my-rentals`,
@@ -174,18 +203,6 @@ const returnBikeIntoDB = async (
             Number(bike.pricePerHour),
         );
 
-        /* if total cost is less then advance payment, then paid amount should be the total cost
-        the rest of the amount will be returned to the user */
-        const paidAmount =
-            totalCost < rental.paidAmount ? totalCost : rental.paidAmount;
-
-        /* if total cost is less then advance payment, then payment status will be paid
-        else payment status will be unpaid */
-        const paymentStatus =
-            totalCost < rental.paidAmount
-                ? PAYMENT_STATUS.PAID
-                : PAYMENT_STATUS.UNPAID;
-
         // update relevant rental data
         const updatedRental = await Rental.findByIdAndUpdate(
             rentalId,
@@ -193,8 +210,6 @@ const returnBikeIntoDB = async (
                 returnTime: payload.returnTime,
                 rentalStatus: RENTAL_STATUS.RETURNED,
                 totalCost,
-                paidAmount,
-                paymentStatus,
             },
             {
                 new: true,
