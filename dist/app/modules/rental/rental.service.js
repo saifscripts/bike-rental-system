@@ -19,6 +19,7 @@ const QueryBuilder_1 = __importDefault(require("../../builders/QueryBuilder"));
 const config_1 = __importDefault(require("../../config"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const bike_model_1 = require("../bike/bike.model");
+const coupon_model_1 = require("../coupon/coupon.model");
 const payment_utils_1 = require("../payment/payment.utils");
 const user_model_1 = require("../user/user.model");
 const rental_constant_1 = require("./rental.constant");
@@ -63,7 +64,8 @@ const createRentalIntoDB = (decodedUser, payload) => __awaiter(void 0, void 0, v
         data: paymentResponse,
     };
 });
-const initiateRemainingPayment = (rentalId) => __awaiter(void 0, void 0, void 0, function* () {
+const initiateRemainingPayment = (rentalId, couponCode) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const rental = yield rental_model_1.Rental.findById(rentalId).populate('userId');
     // check if the rental exists
     if (!rental) {
@@ -73,29 +75,71 @@ const initiateRemainingPayment = (rentalId) => __awaiter(void 0, void 0, void 0,
     if (rental.rentalStatus !== rental_constant_1.RENTAL_STATUS.RETURNED) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Bike is not returned yet!');
     }
-    const user = yield user_model_1.User.findById(rental.userId);
+    const user = yield user_model_1.User.findById(rental.userId).populate('wonCoupon');
     // check if the rental exists
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found!');
     }
-    const remainingAmount = rental.totalCost - rental.paidAmount;
+    // Validate coupon
+    if (couponCode && ((_a = user.wonCoupon) === null || _a === void 0 ? void 0 : _a.code) !== couponCode) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid coupon code.');
+    }
+    // Apply discount if coupon is valid
+    let discount = 0;
+    if (couponCode) {
+        const coupon = yield coupon_model_1.Coupon.findOne({ code: couponCode });
+        if (!coupon) {
+            // remove the coupon from the user
+            yield user_model_1.User.findByIdAndUpdate(user._id, {
+                wonCoupon: null,
+            });
+            throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Invalid coupon code. Coupon may be expired.');
+        }
+        discount = rental.totalCost * (coupon.discountPercentage / 100);
+    }
+    // Calculate final amount after applying the discount
+    const finalAmount = rental.totalCost - discount;
+    const remainingAmount = finalAmount - rental.paidAmount;
     // check if the payment is already done
     if (remainingAmount <= 0) {
-        // update relevant rental data
-        const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(rentalId, {
-            paidAmount: rental.totalCost,
-            paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID,
-        }, {
-            new: true,
-        });
-        if (!updatedRental) {
-            throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to update rental data!');
+        const session = yield mongoose_1.default.startSession();
+        try {
+            session.startTransaction();
+            // update relevant rental data
+            const updatedRental = yield rental_model_1.Rental.findByIdAndUpdate(rentalId, {
+                paidAmount: rental.totalCost,
+                paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID,
+                discount,
+            }, {
+                new: true,
+                session,
+            });
+            if (!updatedRental) {
+                throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to update rental data!');
+            }
+            if (discount > 0) {
+                // remove the coupon from the user
+                const updatedUser = yield user_model_1.User.findByIdAndUpdate(user._id, {
+                    wonCoupon: null,
+                }, { session });
+                if (!updatedUser) {
+                    throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to update user data!');
+                }
+            }
+            // commit transaction and end session
+            yield session.commitTransaction();
+            yield session.endSession();
+            return {
+                statusCode: http_status_1.default.OK,
+                message: `Payment already done. You will get a refund of ${(-remainingAmount).toFixed(2)} taka`,
+                data: updatedRental,
+            };
         }
-        return {
-            statusCode: http_status_1.default.OK,
-            message: `Payment already done. You will get a refund of ${-remainingAmount} taka`,
-            data: updatedRental,
-        };
+        catch (error) {
+            yield session.abortTransaction();
+            yield session.endSession();
+            throw error;
+        }
     }
     const txnId = (0, payment_utils_1.generateTransactionId)();
     const paymentResponse = yield (0, payment_utils_1.initiatePayment)({
@@ -114,6 +158,7 @@ const initiateRemainingPayment = (rentalId) => __awaiter(void 0, void 0, void 0,
     }
     yield rental_model_1.Rental.findByIdAndUpdate(rentalId, {
         finalTxnId: txnId,
+        discount,
     });
     return {
         statusCode: http_status_1.default.OK,

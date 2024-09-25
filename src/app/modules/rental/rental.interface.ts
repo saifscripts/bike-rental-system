@@ -10,6 +10,7 @@ export interface IRental {
     returnTime: Date;
     totalCost: number;
     paidAmount: number;
+    discount: number;
     rentalStatus: keyof typeof RENTAL_STATUS;
     paymentStatus: keyof typeof PAYMENT_STATUS;
     isDeleted: boolean;

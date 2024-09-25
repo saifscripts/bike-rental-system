@@ -127,7 +127,7 @@ const removeAdminFromDB = async (id: string) => {
 };
 
 const getProfileFromDB = async (id: string) => {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate('wonCoupon');
 
     return {
         statusCode: httpStatus.OK,

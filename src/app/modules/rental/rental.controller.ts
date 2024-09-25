@@ -36,6 +36,7 @@ const returnBike = catchAsync(async (req, res) => {
 const initiateRemainingPayment = catchAsync(async (req, res) => {
     const result = await RentalServices.initiateRemainingPayment(
         req.params.rentalId,
+        req.body.couponCode,
     );
     sendResponse(res, result);
 });

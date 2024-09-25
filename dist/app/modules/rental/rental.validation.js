@@ -17,7 +17,13 @@ const returnBikeValidationSchema = zod_1.z.object({
             .datetime({ offset: true }),
     }),
 });
+const initiateRemainingPaymentValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        couponCode: zod_1.z.string().optional(),
+    }),
+});
 exports.RentalValidations = {
     createRentalValidationSchema,
     returnBikeValidationSchema,
+    initiateRemainingPaymentValidationSchema,
 };

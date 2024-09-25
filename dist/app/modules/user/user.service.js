@@ -109,7 +109,7 @@ const removeAdminFromDB = (id) => __awaiter(void 0, void 0, void 0, function* ()
     };
 });
 const getProfileFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findById(id);
+    const user = yield user_model_1.User.findById(id).populate('wonCoupon');
     return {
         statusCode: http_status_1.default.OK,
         message: 'User profile retrieved successfully',

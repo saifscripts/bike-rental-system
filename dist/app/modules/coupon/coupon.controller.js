@@ -41,10 +41,16 @@ const deleteCoupon = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
     const result = yield coupon_service_1.CouponServices.deleteCouponFromDB(req.params.id);
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/v1/coupons/spin (POST)
+const spinWheel = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield coupon_service_1.CouponServices.spinWheelAndAssignCouponToUser(req.user.id);
+    (0, sendResponse_1.default)(res, result);
+}));
 exports.CouponControllers = {
     createCoupon,
     getCoupons,
     getSingleCoupon,
     updateCoupon,
     deleteCoupon,
+    spinWheel,
 };

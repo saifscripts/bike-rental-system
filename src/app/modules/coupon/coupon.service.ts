@@ -1,5 +1,6 @@
 import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
+import { User } from '../user/user.model';
 import { ICoupon } from './coupon.interface';
 import { Coupon } from './coupon.model';
 
@@ -81,10 +82,55 @@ const deleteCouponFromDB = async (id: string) => {
     };
 };
 
+// assign coupon to user by spinning the wheel
+const spinWheelAndAssignCouponToUser = async (userId: string) => {
+    const user = await User.findById(userId).populate('wonCoupon');
+
+    // Check if user has already spun
+    if (user?.wonCoupon) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'You have already won a coupon. Please use it first.',
+        );
+    }
+
+    // Get all active coupons
+    const activeCoupons = await Coupon.find({ isActive: true });
+
+    if (!activeCoupons.length) {
+        throw new AppError(
+            httpStatus.NOT_FOUND,
+            'No active coupons available.',
+        );
+    }
+
+    // Randomly pick a coupon
+    const randomIndex = Math.floor(Math.random() * activeCoupons.length);
+    const selectedCoupon = activeCoupons[randomIndex];
+
+    // Update the user's wonCoupon field
+    const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { wonCoupon: selectedCoupon._id },
+        { new: true },
+    ).populate('wonCoupon');
+
+    if (!updatedUser) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Coupon assigned successfully',
+        data: updatedUser,
+    };
+};
+
 export const CouponServices = {
     createCouponIntoDB,
     getCouponsFromDB,
     getSingleCouponFromDB,
     updateCouponInDB,
     deleteCouponFromDB,
+    spinWheelAndAssignCouponToUser,
 };

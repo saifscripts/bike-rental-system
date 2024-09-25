@@ -35,6 +35,7 @@ const RentalSchema = new mongoose_1.Schema({
     returnTime: { type: Date, default: null },
     totalCost: { type: Number, default: 0 },
     paidAmount: { type: Number, default: 0 },
+    discount: { type: Number, default: 0 },
     rentalStatus: {
         type: String,
         enum: rental_constant_1.RentalStatus,

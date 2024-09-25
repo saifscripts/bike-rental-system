@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import config from '../../config';
 import { UserRoles } from './user.constant';
 import { IUser, UserModel } from './user.interface';
@@ -12,6 +12,11 @@ const UserSchema = new Schema<IUser, UserModel>(
         phone: { type: String, required: true },
         address: { type: String, required: true },
         avatarURL: { type: String, required: false },
+        wonCoupon: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Coupon',
+            default: null,
+        },
         role: {
             type: String,
             required: true,

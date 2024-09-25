@@ -35,10 +35,19 @@ const deleteCoupon = catchAsync(async (req, res) => {
     sendResponse(res, result);
 });
 
+// Route: /api/v1/coupons/spin (POST)
+const spinWheel = catchAsync(async (req, res) => {
+    const result = await CouponServices.spinWheelAndAssignCouponToUser(
+        req.user.id,
+    );
+    sendResponse(res, result);
+});
+
 export const CouponControllers = {
     createCoupon,
     getCoupons,
     getSingleCoupon,
     updateCoupon,
     deleteCoupon,
+    spinWheel,
 };

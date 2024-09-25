@@ -5,6 +5,8 @@ import QueryBuilder from '../../builders/QueryBuilder';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { Bike } from '../bike/bike.model';
+import { ICoupon } from '../coupon/coupon.interface';
+import { Coupon } from '../coupon/coupon.model';
 import {
     generateTransactionId,
     initiatePayment,
@@ -77,7 +79,10 @@ const createRentalIntoDB = async (
     };
 };
 
-const initiateRemainingPayment = async (rentalId: string) => {
+const initiateRemainingPayment = async (
+    rentalId: string,
+    couponCode?: string,
+) => {
     const rental = await Rental.findById(rentalId).populate('userId');
 
     // check if the rental exists
@@ -90,41 +95,101 @@ const initiateRemainingPayment = async (rentalId: string) => {
         throw new AppError(httpStatus.BAD_REQUEST, 'Bike is not returned yet!');
     }
 
-    const user = await User.findById(rental.userId);
+    const user = await User.findById(rental.userId).populate('wonCoupon');
 
     // check if the rental exists
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
     }
 
-    const remainingAmount = rental.totalCost - rental.paidAmount;
+    // Validate coupon
+    if (couponCode && (user.wonCoupon as ICoupon)?.code !== couponCode) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Invalid coupon code.');
+    }
 
-    // check if the payment is already done
-    if (remainingAmount <= 0) {
-        // update relevant rental data
-        const updatedRental = await Rental.findByIdAndUpdate(
-            rentalId,
-            {
-                paidAmount: rental.totalCost,
-                paymentStatus: PAYMENT_STATUS.PAID,
-            },
-            {
-                new: true,
-            },
-        );
+    // Apply discount if coupon is valid
+    let discount = 0;
+    if (couponCode) {
+        const coupon = await Coupon.findOne({ code: couponCode });
+        if (!coupon) {
+            // remove the coupon from the user
+            await User.findByIdAndUpdate(user._id, {
+                wonCoupon: null,
+            });
 
-        if (!updatedRental) {
             throw new AppError(
-                httpStatus.INTERNAL_SERVER_ERROR,
-                'Failed to update rental data!',
+                httpStatus.BAD_REQUEST,
+                'Invalid coupon code. Coupon may be expired.',
             );
         }
 
-        return {
-            statusCode: httpStatus.OK,
-            message: `Payment already done. You will get a refund of ${-remainingAmount} taka`,
-            data: updatedRental,
-        };
+        discount = rental.totalCost * (coupon.discountPercentage / 100);
+    }
+
+    // Calculate final amount after applying the discount
+    const finalAmount = rental.totalCost - discount;
+    const remainingAmount = finalAmount - rental.paidAmount;
+
+    // check if the payment is already done
+    if (remainingAmount <= 0) {
+        const session = await mongoose.startSession();
+
+        try {
+            session.startTransaction();
+
+            // update relevant rental data
+            const updatedRental = await Rental.findByIdAndUpdate(
+                rentalId,
+                {
+                    paidAmount: rental.totalCost,
+                    paymentStatus: PAYMENT_STATUS.PAID,
+                    discount,
+                },
+                {
+                    new: true,
+                    session,
+                },
+            );
+
+            if (!updatedRental) {
+                throw new AppError(
+                    httpStatus.INTERNAL_SERVER_ERROR,
+                    'Failed to update rental data!',
+                );
+            }
+
+            if (discount > 0) {
+                // remove the coupon from the user
+                const updatedUser = await User.findByIdAndUpdate(
+                    user._id,
+                    {
+                        wonCoupon: null,
+                    },
+                    { session },
+                );
+
+                if (!updatedUser) {
+                    throw new AppError(
+                        httpStatus.INTERNAL_SERVER_ERROR,
+                        'Failed to update user data!',
+                    );
+                }
+            }
+
+            // commit transaction and end session
+            await session.commitTransaction();
+            await session.endSession();
+
+            return {
+                statusCode: httpStatus.OK,
+                message: `Payment already done. You will get a refund of ${(-remainingAmount).toFixed(2)} taka`,
+                data: updatedRental,
+            };
+        } catch (error) {
+            await session.abortTransaction();
+            await session.endSession();
+            throw error;
+        }
     }
 
     const txnId = generateTransactionId();
@@ -150,6 +215,7 @@ const initiateRemainingPayment = async (rentalId: string) => {
 
     await Rental.findByIdAndUpdate(rentalId, {
         finalTxnId: txnId,
+        discount,
     });
 
     return {

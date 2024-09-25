@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CouponServices = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
+const user_model_1 = require("../user/user.model");
 const coupon_model_1 = require("./coupon.model");
 const createCouponIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const coupon = yield coupon_model_1.Coupon.create(payload);
@@ -74,10 +75,37 @@ const deleteCouponFromDB = (id) => __awaiter(void 0, void 0, void 0, function* (
         data: deletedCoupon,
     };
 });
+// assign coupon to user by spinning the wheel
+const spinWheelAndAssignCouponToUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId).populate('wonCoupon');
+    // Check if user has already spun
+    if (user === null || user === void 0 ? void 0 : user.wonCoupon) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'You have already won a coupon. Please use it first.');
+    }
+    // Get all active coupons
+    const activeCoupons = yield coupon_model_1.Coupon.find({ isActive: true });
+    if (!activeCoupons.length) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No active coupons available.');
+    }
+    // Randomly pick a coupon
+    const randomIndex = Math.floor(Math.random() * activeCoupons.length);
+    const selectedCoupon = activeCoupons[randomIndex];
+    // Update the user's wonCoupon field
+    const updatedUser = yield user_model_1.User.findByIdAndUpdate(userId, { wonCoupon: selectedCoupon._id }, { new: true }).populate('wonCoupon');
+    if (!updatedUser) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
+    }
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Coupon assigned successfully',
+        data: updatedUser,
+    };
+});
 exports.CouponServices = {
     createCouponIntoDB,
     getCouponsFromDB,
     getSingleCouponFromDB,
     updateCouponInDB,
     deleteCouponFromDB,
+    spinWheelAndAssignCouponToUser,
 };

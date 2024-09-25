@@ -17,7 +17,14 @@ const returnBikeValidationSchema = z.object({
     }),
 });
 
+const initiateRemainingPaymentValidationSchema = z.object({
+    body: z.object({
+        couponCode: z.string().optional(),
+    }),
+});
+
 export const RentalValidations = {
     createRentalValidationSchema,
     returnBikeValidationSchema,
+    initiateRemainingPaymentValidationSchema,
 };

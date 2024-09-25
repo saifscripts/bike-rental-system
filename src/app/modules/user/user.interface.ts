@@ -1,4 +1,5 @@
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
+import { ICoupon } from '../coupon/coupon.interface';
 import { USER_ROLE } from './user.constant';
 
 export type IUserRole = keyof typeof USER_ROLE;
@@ -10,6 +11,7 @@ export interface IUser {
     phone: string;
     address: string;
     avatarURL?: string;
+    wonCoupon: mongoose.Types.ObjectId | ICoupon | null;
     role: IUserRole;
     isDeleted: boolean;
 }

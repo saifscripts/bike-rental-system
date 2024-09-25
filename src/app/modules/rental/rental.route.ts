@@ -28,6 +28,9 @@ router
     .route('/:rentalId/pay-remaining')
     .put(
         auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+        validateRequest(
+            RentalValidations.initiateRemainingPaymentValidationSchema,
+        ),
         RentalControllers.initiateRemainingPayment,
     );
 

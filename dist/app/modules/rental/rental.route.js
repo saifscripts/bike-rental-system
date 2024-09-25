@@ -23,5 +23,5 @@ router
     .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), rental_controller_1.RentalControllers.returnBike);
 router
     .route('/:rentalId/pay-remaining')
-    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), rental_controller_1.RentalControllers.initiateRemainingPayment);
+    .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(rental_validation_1.RentalValidations.initiateRemainingPaymentValidationSchema), rental_controller_1.RentalControllers.initiateRemainingPayment);
 exports.RentalRoutes = router;

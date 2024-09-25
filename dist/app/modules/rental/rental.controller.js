@@ -38,7 +38,7 @@ const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 }));
 // Route: /api/v1/rentals/:rentalId/pay-remaining (PUT)
 const initiateRemainingPayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield rental_service_1.RentalServices.initiateRemainingPayment(req.params.rentalId);
+    const result = yield rental_service_1.RentalServices.initiateRemainingPayment(req.params.rentalId, req.body.couponCode);
     (0, sendResponse_1.default)(res, result);
 }));
 exports.RentalControllers = {

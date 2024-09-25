@@ -20,4 +20,5 @@ router
     .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), coupon_controller_1.CouponControllers.getSingleCoupon)
     .put((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(coupon_validation_1.CouponValidations.updateCouponValidationSchema), coupon_controller_1.CouponControllers.updateCoupon)
     .delete((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), coupon_controller_1.CouponControllers.deleteCoupon);
+router.post('/spin', (0, auth_1.default)(user_constant_1.USER_ROLE.USER, user_constant_1.USER_ROLE.ADMIN), coupon_controller_1.CouponControllers.spinWheel);
 exports.CouponRoutes = router;

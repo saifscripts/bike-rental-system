@@ -26,4 +26,10 @@ router
     )
     .delete(auth(USER_ROLE.ADMIN), CouponControllers.deleteCoupon);
 
+router.post(
+    '/spin',
+    auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+    CouponControllers.spinWheel,
+);
+
 export const CouponRoutes = router;

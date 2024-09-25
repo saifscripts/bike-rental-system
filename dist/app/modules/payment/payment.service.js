@@ -13,11 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentServices = void 0;
+const http_status_1 = __importDefault(require("http-status"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = __importDefault(require("../../config"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const bike_model_1 = require("../bike/bike.model");
 const rental_constant_1 = require("../rental/rental.constant");
 const rental_model_1 = require("../rental/rental.model");
+const user_model_1 = require("../user/user.model");
 const payment_constant_1 = require("./payment.constant");
 const payment_utils_1 = require("./payment.utils");
 const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -60,18 +63,39 @@ const confirmRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () 
 const completeRental = (txnId) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyResponse = yield (0, payment_utils_1.verifyPayment)(txnId);
     if (verifyResponse && verifyResponse.pay_status === 'Successful') {
-        // update payment status and increment paid amount
-        const updatedRental = yield rental_model_1.Rental.findOneAndUpdate({ finalTxnId: txnId }, {
-            $set: { paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID },
-            $inc: { paidAmount: Number(verifyResponse === null || verifyResponse === void 0 ? void 0 : verifyResponse.amount) },
-        }, { new: true });
-        if (!updatedRental) {
-            return 'Something went wrong!';
+        const session = yield mongoose_1.default.startSession();
+        try {
+            session.startTransaction();
+            // update payment status and increment paid amount
+            const updatedRental = yield rental_model_1.Rental.findOneAndUpdate({ finalTxnId: txnId }, {
+                $set: { paymentStatus: rental_constant_1.PAYMENT_STATUS.PAID },
+                $inc: { paidAmount: Number(verifyResponse === null || verifyResponse === void 0 ? void 0 : verifyResponse.amount) },
+            }, { new: true });
+            if (!updatedRental) {
+                throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Something went wrong!');
+            }
+            if (updatedRental.discount > 0) {
+                // remove the coupon from the user
+                const updatedUser = yield user_model_1.User.findByIdAndUpdate(updatedRental.userId, {
+                    wonCoupon: null,
+                }, { session });
+                if (!updatedUser) {
+                    throw new AppError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, 'Failed to update user data!');
+                }
+            }
+            // commit transaction and end session
+            yield session.commitTransaction();
+            yield session.endSession();
+            return (0, payment_utils_1.replaceText)(payment_constant_1.successPage, {
+                'primary-link': `${config_1.default.client_base_url}/dashboard/my-rentals`,
+                'primary-text': 'Continue to Dashboard',
+            });
         }
-        return (0, payment_utils_1.replaceText)(payment_constant_1.successPage, {
-            'primary-link': `${config_1.default.client_base_url}/dashboard/my-rentals`,
-            'primary-text': 'Continue to Dashboard',
-        });
+        catch (error) {
+            yield session.abortTransaction();
+            yield session.endSession();
+            throw error;
+        }
     }
     if (verifyResponse && verifyResponse.pay_status === 'Failed') {
         return (0, payment_utils_1.replaceText)(payment_constant_1.failPage, {
