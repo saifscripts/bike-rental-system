@@ -26,6 +26,11 @@ const getCoupons = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, vo
     const result = yield coupon_service_1.CouponServices.getCouponsFromDB();
     (0, sendResponse_1.default)(res, result);
 }));
+// Route: /api/v1/coupons/active (GET)
+const getActiveCoupons = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield coupon_service_1.CouponServices.getActiveCouponsFromDB();
+    (0, sendResponse_1.default)(res, result);
+}));
 // Route: /api/v1/coupons/:id (GET)
 const getSingleCoupon = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield coupon_service_1.CouponServices.getSingleCouponFromDB(req.params.id);
@@ -49,6 +54,7 @@ const spinWheel = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
 exports.CouponControllers = {
     createCoupon,
     getCoupons,
+    getActiveCoupons,
     getSingleCoupon,
     updateCoupon,
     deleteCoupon,

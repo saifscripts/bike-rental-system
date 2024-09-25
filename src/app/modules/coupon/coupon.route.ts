@@ -16,6 +16,8 @@ router
     )
     .get(auth(USER_ROLE.ADMIN), CouponControllers.getCoupons);
 
+router.route('/active').get(CouponControllers.getActiveCoupons);
+
 router
     .route('/:id')
     .get(auth(USER_ROLE.ADMIN), CouponControllers.getSingleCoupon)

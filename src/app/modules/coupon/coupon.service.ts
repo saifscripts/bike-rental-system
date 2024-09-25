@@ -28,6 +28,20 @@ const getCouponsFromDB = async () => {
     };
 };
 
+const getActiveCouponsFromDB = async () => {
+    const coupons = await Coupon.find({ isActive: true });
+
+    if (coupons.length === 0) {
+        throw new AppError(httpStatus.NOT_FOUND, 'No coupons found');
+    }
+
+    return {
+        statusCode: httpStatus.OK,
+        message: 'Coupons fetched successfully',
+        data: coupons,
+    };
+};
+
 const getSingleCouponFromDB = async (id: string) => {
     const coupon = await Coupon.findById(id);
 
@@ -129,6 +143,7 @@ const spinWheelAndAssignCouponToUser = async (userId: string) => {
 export const CouponServices = {
     createCouponIntoDB,
     getCouponsFromDB,
+    getActiveCouponsFromDB,
     getSingleCouponFromDB,
     updateCouponInDB,
     deleteCouponFromDB,

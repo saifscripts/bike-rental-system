@@ -36,6 +36,17 @@ const getCouponsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
         data: coupons,
     };
 });
+const getActiveCouponsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    const coupons = yield coupon_model_1.Coupon.find({ isActive: true });
+    if (coupons.length === 0) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'No coupons found');
+    }
+    return {
+        statusCode: http_status_1.default.OK,
+        message: 'Coupons fetched successfully',
+        data: coupons,
+    };
+});
 const getSingleCouponFromDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const coupon = yield coupon_model_1.Coupon.findById(id);
     if (!coupon) {
@@ -104,6 +115,7 @@ const spinWheelAndAssignCouponToUser = (userId) => __awaiter(void 0, void 0, voi
 exports.CouponServices = {
     createCouponIntoDB,
     getCouponsFromDB,
+    getActiveCouponsFromDB,
     getSingleCouponFromDB,
     updateCouponInDB,
     deleteCouponFromDB,

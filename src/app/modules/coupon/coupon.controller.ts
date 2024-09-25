@@ -14,6 +14,12 @@ const getCoupons = catchAsync(async (_req, res) => {
     sendResponse(res, result);
 });
 
+// Route: /api/v1/coupons/active (GET)
+const getActiveCoupons = catchAsync(async (_req, res) => {
+    const result = await CouponServices.getActiveCouponsFromDB();
+    sendResponse(res, result);
+});
+
 // Route: /api/v1/coupons/:id (GET)
 const getSingleCoupon = catchAsync(async (req, res) => {
     const result = await CouponServices.getSingleCouponFromDB(req.params.id);
@@ -46,6 +52,7 @@ const spinWheel = catchAsync(async (req, res) => {
 export const CouponControllers = {
     createCoupon,
     getCoupons,
+    getActiveCoupons,
     getSingleCoupon,
     updateCoupon,
     deleteCoupon,

@@ -15,6 +15,7 @@ router
     .route('/')
     .post((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(coupon_validation_1.CouponValidations.createCouponValidationSchema), coupon_controller_1.CouponControllers.createCoupon)
     .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), coupon_controller_1.CouponControllers.getCoupons);
+router.route('/active').get(coupon_controller_1.CouponControllers.getActiveCoupons);
 router
     .route('/:id')
     .get((0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), coupon_controller_1.CouponControllers.getSingleCoupon)
