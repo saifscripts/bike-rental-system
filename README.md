@@ -1,8 +1,12 @@
-# Bike Rental Reservation System Backend
+# RideX || Bike Reservation System
 
-Welcome to the backend of the Bike Rental Reservation System. With this application, users can easily register, log in, and rent bikes. You will find instructions for setting up and using the application in this documentation.
+### [Live URL](https://ridex-alpha.vercel.app) | [Base URL (Server)](https://ridex-server.vercel.app)
 
-## [Live URL (https://bike-rental-system-chi.vercel.app)](https://bike-rental-system-chi.vercel.app)
+### [Frontend Repository](https://github.com/saifscripts/ridex-client)
+
+## Introduction
+
+RiderX offers an intuitive booking system for renting bikes, managing rentals, and applying discounts to rentals.
 
 ## Technology Used
 
@@ -22,6 +26,7 @@ Welcome to the backend of the Bike Rental Reservation System. With this applicat
 -   Bike Availability and Rental Management
 -   Rental Transactions and Cost Calculation
 -   Error Handling and Input Validation
+-
 
 # Setup Instruction
 
@@ -32,7 +37,7 @@ Follow this step-by-step guide to run the server on your local machine.
 First, clone the repository to your machine using the following command:
 
 ```
-git clone https://github.com/saifscripts/bike-rental-system.git
+git clone https://github.com/saifscripts/ridex-server.git
 ```
 
 ### 2. Change Directory
@@ -40,7 +45,7 @@ git clone https://github.com/saifscripts/bike-rental-system.git
 Next, navigate to the project directory with this command:
 
 ```
-cd bike-rental-system
+cd ridex-server
 ```
 
 ### 3. Install Dependencies
@@ -67,9 +72,21 @@ To run the app, create a `.env` file in the root folder with the following prope
 NODE_ENV=development
 PORT=5000
 DB_URI=mongodb://localhost:27017/bike-rental
+BASE_URL=http://localhost:5000
+CLIENT_BASE_URL=http://localhost:5173
 BCRYPT_SALT_ROUNDS=12
 JWT_ACCESS_SECRET=demo_secret
+JWT_REFRESH_SECRET=demo_secret
 JWT_ACCESS_EXP_IN=7d
+JWT_REFRESH_EXP_IN=365d
+STORE_ID=aamarpaytest
+SIGNATURE_KEY=your_signature_key
+PAYMENT_BASE_URL=https://sandbox.aamarpay.com
+MAIL_AUTH_USER=email
+MAIL_AUTH_PASS=your_mail_auth_pass
+CLOUDINARY_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
 **Note:** Change the `DATABASE_URL` if you want to use your own database URI.
