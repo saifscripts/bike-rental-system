@@ -8,6 +8,10 @@
 
 RiderX offers an intuitive booking system for renting bikes, managing rentals, and applying discounts to rentals.
 
+## Project Description
+
+Bike Rental Reservation System Backend using TypeScript, Express and Mongoose. This project offers API endpoints with role base authentication for RideX bike reservation application.
+
 ## Technology Used
 
 -   **Programming Language**: TypeScript
@@ -26,7 +30,9 @@ RiderX offers an intuitive booking system for renting bikes, managing rentals, a
 -   Bike Availability and Rental Management
 -   Rental Transactions and Cost Calculation
 -   Error Handling and Input Validation
--
+-   AmarPay payment method integration
+-   Email sending functionality using Nodemailer
+-   Image Upload functionality using Cloudinary
 
 # Setup Instruction
 
